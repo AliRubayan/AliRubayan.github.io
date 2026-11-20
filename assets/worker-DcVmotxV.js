@@ -1,1 +1,0 @@
-import{_ as e,c as t,g as n,t as r,v as i}from"./WorkerApp-DFslaS8B.js";var a=i(e(),1),o=n(),s=t();(0,o.createRoot)(document.getElementById(`root`)).render((0,s.jsx)(a.StrictMode,{children:(0,s.jsx)(r,{standalone:!0})}));
