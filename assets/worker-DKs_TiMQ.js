@@ -1,0 +1,1 @@
+import{_ as e,c as t,t as n,v as r,y as i}from"./WorkerApp-YJJNhoAx.js";var a=i(r(),1),o=e(),s=t();(0,o.createRoot)(document.getElementById(`root`)).render((0,s.jsx)(a.StrictMode,{children:(0,s.jsx)(n,{standalone:!0})}));
