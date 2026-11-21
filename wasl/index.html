@@ -264,6 +264,46 @@ label.f{display:grid;gap:6px;font-size:13px;color:var(--ink2)}
 @keyframes flow{to{background-position:-14px 0}}
 code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#F4EFE7;padding:2px 6px;border-radius:6px;direction:ltr;display:inline-block}
 
+/* ---------- centered chat ---------- */
+.cl{flex:1;display:flex;flex-direction:column;min-height:0;height:calc(100dvh - 120px);max-height:calc(100dvh - 120px)}
+.cl.empty{justify-content:center}
+.clin{width:100%;max-width:720px;margin:0 auto;display:grid;gap:12px}
+.cl .chat{flex:1;max-height:none;width:100%;max-width:720px;margin:0 auto;padding:8px 4px 20px;gap:16px}
+.cl .msg{font-size:15px;line-height:1.8;max-width:100%}
+.cl .msg.bot{align-self:stretch;background:none;border:0;padding:0 4px;border-radius:0}
+.cl .msg.me{align-self:flex-start;background:#F1E9DF;color:var(--ink);border-radius:16px;padding:10px 14px;max-width:85%}
+.dk .cl .msg.me{background:#FFE3D3}
+.spark{width:52px;height:52px;border-radius:16px;margin:0 auto;display:grid;place-items:center;color:#fff;background:linear-gradient(160deg,#4C8DFF,#1633FF)}
+.spark svg{width:26px;height:26px}
+.greet{font-family:var(--display);font-size:28px;text-align:center;margin:0 0 6px;text-wrap:balance}
+.composer{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E3DBCF;border-radius:22px;padding:8px 8px 8px 8px;box-shadow:0 8px 28px #5a46281a}
+.composer:focus-within{border-color:var(--gold)}
+.dk .composer:focus-within{border-color:var(--dk-or)}
+.composer input{border:0;background:none;padding:10px 12px;font-size:15px}
+.composer input:focus-visible{outline:none}
+.composer button{flex:none;width:40px;height:40px;border-radius:12px;background:var(--gold);color:#fff;font-size:20px;font-weight:700}
+.dk .composer button{background:var(--dk-or)}
+.cl .qs{justify-content:center}
+.cl .qs button{font-size:13px;padding:8px 12px}
+/* ---------- reconciliation ---------- */
+.banner{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:18px;background:#FFE9DC;border:2px solid var(--dk-or);flex-wrap:wrap}
+.banner.ok{background:var(--goodbg);border-color:var(--good)}
+.bic{flex:none;width:48px;height:48px;border-radius:50%;background:var(--dk-or);color:#fff;display:grid;place-items:center;font-size:26px;font-weight:900}
+.banner.ok .bic{background:var(--good)}
+.btx{flex:1;min-width:200px;display:grid;gap:4px}
+.btx b{font-family:var(--display);font-size:20px}
+.btx span{font-size:14px;line-height:1.7;color:#4a3a2c}
+.btn.big{padding:15px 28px;font-size:17px;border-radius:14px;box-shadow:0 8px 20px #ff671f55}
+.rt td,.rt th{padding:14px 12px;font-size:15px}
+.rt th{font-size:13px}
+.rt tr.tot td{background:#FBF6EF;border-top:2px solid var(--rule)}
+.rt .diff{font-size:15px}
+.dgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.dgrid div{background:#F8F5F0;border-radius:12px;padding:12px;display:grid;gap:4px}
+.dgrid span{font-size:12px;color:var(--ink2)}
+.dgrid b{font-size:14px}
+@media (max-width:1000px){.dgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.cl{height:calc(100dvh - 190px);max-height:calc(100dvh - 190px)}.greet{font-size:22px}}
+
 /* ---------- permission prompt (simulated) ---------- */
 .perm{background:#F7F4EF;border-radius:18px;width:100%;max-width:290px;text-align:center;padding:18px 0 0;box-shadow:0 20px 50px #0005;overflow:hidden}
 .perm .pico{width:46px;height:46px;border-radius:12px;background:var(--goldbg);color:var(--gold2);display:grid;place-items:center;margin:0 auto 10px}
@@ -300,8 +340,8 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background
 .ev{border-top:1px solid var(--line-d);padding:12px 0;font-size:14px;line-height:1.6}
 .ev small{display:block;color:var(--muted-d);font-size:12px}
 .ev .who{font-size:11px;padding:2px 8px;border-radius:999px;background:#FFFFFF14;color:var(--ice);margin-inline-end:6px}
-.toasts{pointer-events:none;position:fixed;z-index:60;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);display:grid;gap:8px;width:min(460px,calc(100% - 32px))}
-.toast{background:#0A1330;color:#fff;border:1px solid #2B3B78;border-radius:14px;padding:12px 14px;font-size:14px;box-shadow:0 14px 40px #0008;animation:up .25s ease;line-height:1.6}
+.toasts{pointer-events:none;position:fixed;z-index:60;top:calc(12px + env(safe-area-inset-top,0px));left:calc(12px + env(safe-area-inset-left,0px));display:grid;gap:8px;justify-items:start;max-width:min(320px,calc(100% - 24px))}
+.toast{background:#0A1330;color:#fff;border:1px solid #2B3B78;border-radius:12px;padding:8px 12px;font-size:13px;box-shadow:0 14px 40px #0008;animation:up .25s ease;line-height:1.6}
 .toast b{color:#9CC4FF}
 
 @media (max-width:1000px){
@@ -457,7 +497,7 @@ function emit(text,views,local){
   save();
   if(local)toast(local);
 }
-function toast(h){const t=document.createElement('div');t.className='toast';t.innerHTML=h;const box=document.getElementById('toasts');box.appendChild(t);while(box.children.length>2)box.firstChild.remove();setTimeout(()=>t.remove(),4500)}
+function toast(h){const t=document.createElement('div');t.className='toast';t.innerHTML=h;const box=document.getElementById('toasts');box.appendChild(t);while(box.children.length>2)box.firstChild.remove();setTimeout(()=>t.remove(),2600)}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 
 /* ---------- WORKER ---------- */
@@ -591,7 +631,7 @@ function client(){
    <section class="content">${{home:cHome,staff:cStaff,reqs:cReqs,recon:cRecon,ai:cAI}[S.ctab]()}</section>
   </div>`;
 }
-function cHead(t){return `<div class="chead"><h2>${t}</h2><span class="live">مباشر</span><span class="tagdemo">بيانات تجريبية · مثال توضيحي</span><div class="end"><button class="btn pk" data-act="newreq">+ طلب جديد</button><button class="btn or" data-act="ctab" data-v="ai">اسأل مدير الحساب</button></div></div>`}
+function cHead(t,bare){return `<div class="chead"><h2>${t}</h2><span class="live">مباشر</span><span class="tagdemo">بيانات تجريبية · مثال توضيحي</span>${bare?'</div>':''}`+(bare?'':`<div class="end"><button class="btn pk" data-act="newreq">+ طلب جديد</button><button class="btn or" data-act="ctab" data-v="ai">اسأل مدير الحساب</button></div></div>`)}
 function cKpis(){
   const open=S.reqs.filter(r=>r.status!=='done').length;
   return `<div class="kpis">
@@ -639,17 +679,50 @@ function cReqs(){
   </div>`;
 }
 function cRecon(){
-  const rows=[['فرع الملقا',21,21+(S.shift==='on'?1:0)-(S.shift==='on'?1:0)],['فرع العليا',7,8],['فرع النخيل',8,8],['فرع الياسمين',10,10]];
-  let body;
-  if(S.sheet==='none') body=`<div class="panel" style="text-align:center;padding:40px 16px"><h3 style="justify-content:center">عندك شيت حضور خاص؟</h3><p class="mut" style="max-width:420px;margin:0 auto 14px;line-height:1.8">ارفعه وحنا نطابقه مع الحضور الذكي (تحقق الهوية + الموقع) ونبيّن لك الفرق قبل الفاتورة.</p><button class="btn or" data-act="loadsheet">ارفع شيت دانكن · نوفمبر (عيّنة)</button></div>`;
-  else body=`<div class="alert ${S.sheet==='approved'?'ok':''}" style="${S.sheet==='approved'?'':'background:#FFF1EA;border-color:#f8cdb6'}"><b>${S.sheet==='approved'?'✓ اعتمدت المطابقة ووصلت مهارة. الفاتورة تطلع على الأرقام المتفق عليها.':'فيه فرق في فرع العليا: يوم واحد ما سجّلتوه عندكم، والحضور الذكي مثبته بالهوية والموقع.'}</b>${S.sheet==='approved'?'':'<button class="btn or sm" data-act="approvesheet" style="margin-inline-start:auto">اعتمد المطابقة</button>'}</div>
-   <div class="panel"><h3>مطابقة الحضور · أيام الحضور لكل فرع<span class="mut">شيتكم مقابل الحضور الذكي</span></h3><div class="tw"><table><thead><tr><th>الفرع</th><th>شيتكم</th><th>الحضور الذكي</th><th>الفرق</th></tr></thead><tbody>
-   ${rows.map(([n,a,b])=>`<tr class="${a!==b?'flag':''}"><td>${n}</td><td class="num">${a}</td><td class="num">${b}</td><td>${a!==b?`<span class="diff">+${b-a} يوم · عامل ما سُجل عندكم</span>`:'<span class="chip good">مطابق</span>'}</td></tr>`).join('')}
-   </tbody></table></div><p class="mut" style="margin:10px 0 0">كل يوم في الحضور الذكي عليه تحقق هوية وموقع وقت بداية الشفت.</p></div>`;
-  return `${cHead('مطابقة الحضور')}${body}`;
+  const rows=[['فرع الملقا',9,21,21],['فرع العليا',9,7,8],['فرع النخيل',8,8,8],['فرع الياسمين',8,10,10]];
+  const ta=rows.reduce((x,r)=>x+r[2],0), tb=rows.reduce((x,r)=>x+r[3],0), rate=260;
+  if(S.sheet==='none') return `${cHead('مطابقة الحضور',true)}<div class="panel" style="text-align:center;padding:48px 16px"><h3 style="justify-content:center;font-size:22px">عندك شيت حضور خاص؟</h3><p class="mut" style="max-width:440px;margin:0 auto 18px;line-height:1.8;font-size:14px">ارفعه وحنا نطابقه مع الحضور الذكي (تحقق الهوية + الموقع) ونبيّن لك الفرق قبل الفاتورة.</p><button class="btn or big" data-act="loadsheet">ارفع شيت دانكن · نوفمبر (عيّنة)</button></div>`;
+  const ok=S.sheet==='approved';
+  return `${cHead('مطابقة الحضور',true)}
+   <div class="banner ${ok?'ok':''}">
+     <div class="bic">${ok?'✓':'!'}</div>
+     <div class="btx"><b>${ok?'اعتمدت المطابقة':'فيه فرق: يوم واحد في فرع العليا'}</b><span>${ok?'وصلت مهارة، والفاتورة تطلع على الأرقام المتفق عليها.':'عامل حضر وتحققنا من هويته وموقعه، لكنه مو مسجل في شيتكم. راجع التفاصيل تحت ثم اعتمد.'}</span></div>
+     ${ok?'':'<button class="btn or big" data-act="approvesheet">اعتمد المطابقة</button>'}
+   </div>
+   <div class="kpis">
+     <div class="kpi"><span>أيام الحضور في شيتكم</span><b class="num">${ta}</b><small style="color:var(--ink2)">شيت دانكن · نوفمبر</small></div>
+     <div class="kpi"><span>أيام الحضور الذكي</span><b class="num">${tb}</b><small style="color:var(--ink2)">هوية + موقع</small></div>
+     <div class="kpi" style="border-color:${ok?'var(--rule)':'var(--dk-or)'}"><span>الفرق</span><b class="num" style="color:${ok?'var(--good)':'var(--dk-or)'}">${ok?'0':'+'+(tb-ta)} <small style="font-size:15px">يوم</small></b><small style="color:var(--ink2)">${ok?'تمت التسوية':'فرع واحد من 4'}</small></div>
+     <div class="kpi"><span>أثره على الفاتورة</span><b class="num">+${(tb-ta)*rate} <small style="font-size:15px">ريال</small></b><small style="color:var(--ink2)">سعر اليوم التجريبي ${rate}</small></div>
+   </div>
+   <div class="panel"><h3>المطابقة لكل فرع<span class="mut">1 إلى 21 نوفمبر</span></h3><div class="tw"><table class="rt"><thead><tr><th>الفرع</th><th>العمال</th><th>شيتكم (أيام)</th><th>الحضور الذكي (أيام)</th><th>الفرق</th><th>الحالة</th></tr></thead><tbody>
+   ${rows.map(([n,w,a,b])=>`<tr class="${a!==b&&!ok?'flag':''}"><td><b>${n}</b></td><td class="num">${w}</td><td class="num">${a}</td><td class="num">${b}</td><td class="num">${a!==b?`<span class="diff">+${b-a} يوم</span>`:'0'}</td><td>${a!==b?(ok?'<span class="chip good">تمت التسوية ✓</span>':'<span class="chip bad">● يحتاج مراجعتك</span>'):'<span class="chip good">● مطابق</span>'}</td></tr>`).join('')}
+   <tr class="tot"><td><b>المجموع</b></td><td class="num">34</td><td class="num"><b>${ta}</b></td><td class="num"><b>${tb}</b></td><td class="num"><b>${ok?'0':'+'+(tb-ta)}</b></td><td></td></tr>
+   </tbody></table></div></div>
+   <div class="panel"><h3>تفاصيل الفرق · فرع العليا<span class="mut">اليوم اللي ما انسجل عندكم</span></h3>
+     <div class="dgrid">
+       <div><span>العامل</span><b>ماريا · باريستا</b></div>
+       <div><span>اليوم</span><b>الثلاثاء 17 نوفمبر</b></div>
+       <div><span>بداية الشفت</span><b class="num">7:58 ص</b></div>
+       <div><span>نهاية الشفت</span><b class="num">4:03 م</b></div>
+       <div><span>تحقق الهوية</span><b style="color:var(--good)">✓ مطابق</b></div>
+       <div><span>الموقع</span><b style="color:var(--good)">✓ داخل النطاق · 22 م</b></div>
+       <div><span>في شيتكم</span><b style="color:var(--dk-or)">غير مسجل</b></div>
+       <div><span>في الحضور الذكي</span><b>يوم كامل · 8 ساعات</b></div>
+     </div>
+     <p class="mut" style="margin:12px 0 0">كل يوم في الحضور الذكي عليه تحقق هوية وموقع وقت بداية الشفت. بيانات تجريبية.</p>
+   </div>`;
 }
 function cAI(){
-  return `${cHead('مدير الحساب الذكي')}<div class="panel" style="max-width:760px">${chatBody('client')}</div>`;
+  return `${cHead('مدير الحساب الذكي',true)}${claudeChat('client')}`;
+}
+function claudeChat(role){
+  const msgs=S.chats[role], fresh1=msgs.length<=1;
+  const greet={client:'وش أقدر أساعدك فيه اليوم؟',maharah:'وش تبي تعرف عن عملائك اليوم؟'}[role];
+  const composer=`<form class="composer" id="askf" data-role="${role}"><input type="text" id="askin" placeholder="اسأل عن الحضور، الطلبات، الفاتورة…" aria-label="سؤالك" autocomplete="off"><button type="submit" aria-label="أرسل">↑</button></form>`;
+  const chips=`<div class="qs">${QS[role].map(q=>`<button data-act="ask" data-v="${q}" data-role="${role}">${q}</button>`).join('')}</div>`;
+  if(fresh1) return `<div class="cl empty"><div class="clin"><div class="spark">${I.chat}</div><h3 class="greet">${greet}</h3>${composer}${chips}<div class="chat" id="chat" hidden></div></div></div>`;
+  return `<div class="cl"><div class="chat" id="chat">${msgs.slice(1).map(m=>`<div class="msg ${m.me?'me':'bot'} ${m.pending?'typing':''}">${m.me?esc(m.t):m.html?m.t:esc(m.t)}</div>`).join('')}</div><div class="clin">${composer}${chips}</div></div>`;
 }
 const QS={worker:['كم راتبي المتوقع؟','ليش انخصم علي؟','متى ينتهي عقدي؟','كيف أعترض على خصم؟'],
  client:['كم عامل حاضر الحين؟','وين وصل طلبي؟','ليش فيه فرق في الفاتورة؟','متى تخلص عقود عمالي؟'],
@@ -743,7 +816,7 @@ function mContracts(){
   </div>`;
 }
 function mAI(){
-  return `<div class="chead"><h2>المساعد الذكي</h2><span class="live">يقرأ السجل المباشر</span><span class="tagdemo">بيانات تجريبية</span></div><div class="panel" style="max-width:760px">${chatBody('maharah')}</div>`;
+  return `<div class="chead"><h2>المساعد الذكي</h2><span class="live">يقرأ السجل المباشر</span><span class="tagdemo">بيانات تجريبية</span></div>${claudeChat('maharah')}`;
 }
 function mApi(){
   return `<div class="chead"><h2>التكامل</h2><span class="live">API · متصل (محاكاة)</span></div>
@@ -865,7 +938,7 @@ function localAnswer(role,q){
   return null;
 }
 function paintChat(){const c=document.getElementById('chat');if(!c)return;const role=document.getElementById('askf')?.dataset.role;if(!role)return;
-  c.innerHTML=S.chats[role].map(m=>`<div class="msg ${m.me?'me':'bot'} ${m.pending?'typing':''}">${m.me?esc(m.t):m.html?m.t:esc(m.t)}</div>`).join('');c.scrollTop=c.scrollHeight}
+  c.innerHTML=(c.closest('.cl')?S.chats[role].slice(1):S.chats[role]).map(m=>`<div class="msg ${m.me?'me':'bot'} ${m.pending?'typing':''}">${m.me?esc(m.t):m.html?m.t:esc(m.t)}</div>`).join('');c.scrollTop=c.scrollHeight}
 async function ask(q,role){
   q=(q||'').trim();if(!q)return;
   const chat=S.chats[role];

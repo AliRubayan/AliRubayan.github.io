@@ -1,5 +1,5 @@
 /* Wasl demo service worker: serve the cached copy at once, refresh it in the background. */
-const CACHE = "wasl-v8"
+const CACHE = "wasl-v9"
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"]
 self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES))) })
 self.addEventListener("activate", (e) => e.waitUntil(
