@@ -229,8 +229,22 @@ tr.hl td{animation:hl 2.4s ease}
 .alert{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--badbg);border:1px solid #f3c4c4;flex-wrap:wrap}
 .alert.ok{background:var(--goodbg);border-color:#bfe6cd}
 .alert b{font-size:14px}
-.mapbox{position:relative;border-radius:14px;overflow:hidden;background:#F3E9DF;aspect-ratio:16/10;max-width:100%}
-.mapbox svg{width:100%;height:100%;display:block}
+.mapbox{position:relative;border-radius:16px;overflow:hidden;background:#F1ECE4;aspect-ratio:16/10;max-width:100%;border:1px solid var(--rule)}
+.mapbox svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.msum{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.mk{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:3px 10px 3px 3px;box-shadow:0 4px 12px #5a462833;font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;direction:rtl;border:2px solid transparent;transition:transform .12s}
+.mk:hover{transform:translate(-50%,-50%) scale(1.07);z-index:3}
+.mk.on{border-color:var(--ink);z-index:4}
+.mkc{display:grid;place-items:center;min-width:34px;height:24px;padding:0 6px;border-radius:999px;color:#fff;font-size:11px;font-weight:700;background:var(--good);direction:ltr}
+.mk.bad .mkc{background:var(--bad)}.mk.rep .mkc{background:#1633FF}
+.mk.bad{z-index:2}
+.mk.bad::after{content:"";position:absolute;inset:-5px;border-radius:999px;border:2px solid var(--bad);animation:ping 1.6s ease-out infinite;pointer-events:none}
+@keyframes ping{0%{opacity:.8;transform:scale(.92)}100%{opacity:0;transform:scale(1.25)}}
+.mcard{margin-top:10px;background:#fff;border:1px solid var(--rule);border-radius:16px;padding:14px}
+.mbig{font-family:var(--display);font-weight:900;font-size:30px;line-height:1}
+.mbig small{font-size:15px;color:var(--ink2)}
+.mbar{height:8px;border-radius:999px;background:#EFE7DA;overflow:hidden}.mbar i{display:block;height:100%}
+@media (max-width:700px){.mk{padding:3px}.mkn{display:none}.mk.on .mkn,.mk.bad .mkn{display:inline;padding-inline-end:6px}.mapbox{aspect-ratio:4/3.6}}
 .legend{display:flex;gap:14px;font-size:12px;color:var(--ink2);margin-top:8px;flex-wrap:wrap}
 .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-inline-end:4px}
 .chat{display:flex;flex-direction:column;gap:8px;max-height:330px;overflow-y:auto;padding:4px}
@@ -487,7 +501,7 @@ function fresh(){return {
  log:[], unseen:{worker:0,client:0,maharah:0}, drawer:false, modal:null, flash:{}
 };}
 const KEY='wasl-demo-v2';
-const TRANSIENT=['view','modal','vw','drawer','flash','pick','other','mreq','wtab','ctab','mtab','loading'];
+const TRANSIENT=['view','modal','vw','pickB','drawer','flash','pick','other','mreq','wtab','ctab','mtab','loading'];
 function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){const f=fresh();TRANSIENT.forEach(k=>delete j[k]);if(j.shift==='verifying')j.shift='idle';if(!j.perms)j.perms={cam:false,loc:false};if(j.chats)Object.values(j.chats).forEach(a=>{for(let i=a.length-1;i>=0;i--)if(a[i].pending)a.splice(i,1)});return Object.assign(f,j)}}catch(e){}return fresh()}
 function save(){try{const o={};Object.keys(S).forEach(k=>{if(!TRANSIENT.includes(k))o[k]=S[k]});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
 let S=load();
@@ -653,13 +667,27 @@ function bStatus(b){
   if(b.here<b.need)return `<span class="chip bad">● ${b.need-b.here} ما حضر</span>`;
   return `<span class="chip good">● مكتمل</span>`;
 }
+const POS={malqa:[47,17],hittin:[24,24],yasmin:[66,14],sahafa:[82,27],nakheel:[35,40],olaya:[53,45],rawdah:[87,48],murooj:[69,52],aqiq:[18,56],sulaimania:[44,68],naseem:[90,72],rabwa:[68,80]};
+function bState(b){return b.id==='nakheel'&&S.absent.status==='replacement'?'rep':b.here<b.need?'bad':'ok'}
 function map(){
-  const dots=S.branches.map(b=>{const c=b.id==='nakheel'&&S.absent.status==='replacement'?'#1633FF':b.here<b.need?'#D23B3B':'#1E9E5A';
-    return `<g><circle cx="${b.x}" cy="${b.y}" r="16" fill="${c}" opacity=".18"/><circle cx="${b.x}" cy="${b.y}" r="7" fill="${c}"/><text x="${b.x}" y="${b.y-14}" text-anchor="middle" font-size="12" fill="#5A2D0C" font-family="IBM Plex Sans Arabic">${b.n.replace('فرع ','')} ${b.here}/${b.need}</text></g>`}).join('');
-  return `<div class="mapbox"><svg viewBox="0 0 640 400" role="img" aria-label="خريطة الفروع"><rect width="640" height="400" fill="#F3E9DF"/>
-   <path d="M0 300 C160 280 260 320 640 250" stroke="#fff" stroke-width="14" fill="none"/><path d="M340 0 C330 120 360 260 300 400" stroke="#fff" stroke-width="14" fill="none"/><path d="M80 0 L140 400" stroke="#fff" stroke-width="8" fill="none"/><path d="M0 140 L640 110" stroke="#fff" stroke-width="8" fill="none"/>
-   <text x="20" y="385" font-size="12" fill="#a88" font-family="IBM Plex Sans Arabic">الرياض · مواقع تقريبية</text>${dots}</svg></div>
-   <div class="legend"><span><i style="background:#1E9E5A"></i>مكتمل</span><span><i style="background:#D23B3B"></i>فيه غياب</span><span><i style="background:#1633FF"></i>بديل في الطريق</span></div>`;
+  const bad=S.branches.filter(b=>bState(b)==='bad').length, rep=S.branches.filter(b=>bState(b)==='rep').length;
+  const sel=S.branches.find(b=>b.id===S.pickB);
+  const pins=S.branches.map(b=>{const st=bState(b),[x,y]=POS[b.id];
+    return `<button class="mk ${st} ${S.pickB===b.id?'on':''}" style="left:${x}%;top:${y}%" data-act="pickb" data-v="${b.id}" aria-label="${b.n} ${b.here} من ${b.need}"><span class="mkc num">${b.here}/${b.need}</span><span class="mkn">${b.n.replace('فرع ','')}</span></button>`}).join('');
+  const card=sel?`<div class="mcard"><div class="row between"><b>${sel.n}</b><button class="mut" data-act="pickb" data-v="" aria-label="إغلاق">✕</button></div>
+     <div class="row" style="gap:10px;margin:8px 0"><span class="mbig num">${sel.here}<small>/${sel.need}</small></span>${bStatus(sel)}</div>
+     <div class="mbar"><i style="width:${Math.round(sel.here/sel.need*100)}%;background:${{ok:'var(--good)',bad:'var(--bad)',rep:'#1633FF'}[bState(sel)]}"></i></div>
+     <p class="mut" style="margin:8px 0 0">${bState(sel)==='bad'?(sel.id==='nakheel'?'سالم (كاشير) ما حضر شفت 8:00.':'كريم (كاشير) ما بدأ شفته بعد.'):bState(sel)==='rep'?'بديل سالم في الطريق من مهارة.':'كل العمال حاضرين ومتحقق منهم.'}</p>
+     ${bState(sel)==='bad'?`<button class="btn pk sm" style="margin-top:10px" data-act="newreq-b" data-v="${sel.id}">اطلب بديل لهذا الفرع</button>`:''}</div>`:'';
+  return `<div class="msum"><span class="chip good">● ${12-bad-rep} مكتمل</span>${bad?`<span class="chip bad">● ${bad} فيه غياب</span>`:''}${rep?`<span class="chip blue">● ${rep} بديل في الطريق</span>`:''}<span class="mut" style="margin-inline-start:auto">اضغط أي فرع للتفاصيل</span></div>
+   <div class="mapbox"><svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+     <rect width="640" height="400" fill="#F1ECE4"/>
+     <g fill="#F8F5F0">${[[10,10,120,80],[150,10,150,60],[330,10,130,70],[490,10,140,90],[10,110,90,110],[120,95,170,95],[320,105,140,85],[490,125,140,100],[10,245,150,145],[190,215,110,90],[330,215,130,80],[490,250,140,140],[190,330,270,60]].map(([x,y,w,h])=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/>`).join('')}</g>
+     <rect x="198" y="222" width="94" height="76" rx="10" fill="#DDEBD5"/><rect x="498" y="18" width="60" height="44" rx="10" fill="#DDEBD5"/>
+     <g stroke="#fff" fill="none" stroke-linecap="round"><path d="M-10 92 H650" stroke-width="12"/><path d="M-10 205 C200 195 420 215 650 235" stroke-width="16"/><path d="M-10 318 H650" stroke-width="10"/><path d="M110 -10 V410" stroke-width="10"/><path d="M310 -10 C300 140 330 260 318 410" stroke-width="16"/><path d="M475 -10 V410" stroke-width="12"/></g>
+     <g stroke="#E3D9C9" fill="none" stroke-dasharray="2 9" stroke-linecap="round" stroke-width="2"><path d="M-10 205 C200 195 420 215 650 235"/><path d="M310 -10 C300 140 330 260 318 410"/></g>
+     <text x="14" y="392" font-size="11" fill="#b3a593" font-family="IBM Plex Sans Arabic,Tahoma">الرياض · مواقع تقريبية</text>
+   </svg>${pins}</div>${card}`;
 }
 function bTable(rows){
   return `<div class="tw"><table><thead><tr><th>الفرع</th><th>حاضر</th><th>المطلوب</th><th>الحالة</th></tr></thead><tbody>${rows.map(b=>`<tr class="${S.flash['b_'+b.id]?'hl':''}"><td>${b.n}</td><td class="num">${b.here}</td><td class="num">${b.need}</td><td>${bStatus(b)}</td></tr>`).join('')}</tbody></table></div>`;
@@ -1028,7 +1056,9 @@ document.addEventListener('click',e=>{
    case 'send-dispute':{if(S.pick==='__other'){const t=(document.getElementById('otherReason')?.value||'').trim();if(!t){toast('اكتب سبب الاعتراض أول');const x=document.getElementById('otherReason');if(x)x.focus();break}S.pick=t}}S.ded.status='disputed';S.ded.reason=S.pick;S.modal=null;S.flash.disp=1;render();emit('كريم اعترض على خصم التأخير #4613 (45 ريال) من التطبيق.',['worker','maharah'],'انرسل اعتراضك لمهارة');break;
    case 'disp-ok':S.ded.status='refunded';S.wnotes.unshift({kind:'ok',title:'انقبل اعتراضك ✓',body:'رجعنا خصم التأخير 45 ريال، وراتبك المتوقع صار '+fmt(expected())+' ريال.',read:false});S.flash.payk=1;render();emit('مهارة قبلت اعتراض كريم ورجع 45 ريال. راتبه المتوقع صار '+fmt(expected())+' ريال.',['maharah','worker'],'قبلت الاعتراض ورجع المبلغ للعامل');break;
    case 'disp-no':S.ded.status='rejected';S.wnotes.unshift({kind:'no',title:'تمت مراجعة اعتراضك',body:'الخصم باقي حسب سجل الحضور. تقدر تتواصل مع مدير حسابك.',read:false});render();emit('مهارة راجعت اعتراض كريم وأبقت الخصم.',['maharah','worker'],'رفضت الاعتراض');break;
-   case 'ctab':S.ctab=v;render();break;
+   case 'ctab':S.ctab=v;S.pickB=null;render();break;
+   case 'pickb':S.pickB=(v&&S.pickB!==v)?v:null;render();break;
+   case 'newreq-b':S.modal='newreq';S.mreq={type:'بديل',branch:v,vals:{}};render();break;
    case 'mtab':S.mtab=v;render();break;
    case 'newreq':S.modal='newreq';S.mreq={type:'عامل إضافي',branch:'olaya',vals:{}};render();break;
    case 'rtype':readReq();S.mreq.type=v;S.mreq.vals={};render();break;
