@@ -1,5 +1,5 @@
 /* Wasl demo service worker: network first, cached copy when offline. */
-const CACHE = "wasl-v5"
+const CACHE = "wasl-v6"
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"]
 self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES))) })
 self.addEventListener("activate", (e) => e.waitUntil(
