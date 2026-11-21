@@ -10,8 +10,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="وصل">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<style>html,body{margin:0}[hidden]{display:none!important}</style>
-<title>وصل · جرّب النظام</title>
+<style>[hidden]{display:none!important}</style>
+<title>وصل</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Cairo:wght@700;800;900&display=swap">
 <style>
 /* Layout: navy Wasl shell (switcher + shared log) framing three product views, each in its own brand: My Maharah gold phone, Dunkin-style client portal, Maharah console. Single deliberate light look inside a dark shell. */
@@ -25,6 +25,7 @@
   --display:'Cairo','IBM Plex Sans Arabic',Tahoma,sans-serif;--body:'IBM Plex Sans Arabic',Tahoma,sans-serif;
 }
 *{box-sizing:border-box}
+html,body{margin:0}
 html,body{background:var(--night)}
 body{font-family:var(--body);color:var(--ink);min-height:100vh;direction:rtl;
   background:radial-gradient(900px 600px at 100% 0%,#13248A55,transparent 60%),linear-gradient(180deg,var(--navy),var(--night)) fixed}
@@ -52,11 +53,36 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hint{max-width:1400px;margin:14px auto 0;color:var(--ice);font-size:14px;display:flex;gap:10px;align-items:flex-start;line-height:1.6}
 .hint b{color:#fff}
 .hint i{flex:none;font-style:normal;background:var(--blue);color:#fff;border-radius:8px;padding:1px 8px;font-size:12px;margin-top:2px}
-main{max-width:1400px;margin:14px auto 0;padding-block:0 110px}
+main{margin:0}
 .disclaimer{max-width:1400px;margin:0 auto;padding-block:0 24px;color:var(--muted-d);font-size:12px;text-align:center;line-height:1.7}
 
+/* ---------- landing ---------- */
+.land{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding-block:40px;color:#fff;text-align:center}
+.land .lg svg{width:84px;height:84px}
+.land h1{font-family:var(--display);font-weight:900;font-size:56px;margin:4px 0 0;line-height:1}
+.land .tag{color:var(--muted-d);font-size:18px;margin:8px 0 0}
+.land h2{font-size:16px;font-weight:600;color:var(--ice);margin:0}
+.roles{display:grid;grid-template-columns:repeat(3,minmax(0,260px));gap:16px;width:100%;justify-content:center}
+.role{background:#FFFFFF0C;border:1px solid var(--line-d);border-radius:22px;padding:22px 18px;display:grid;justify-items:center;gap:10px;color:#fff;transition:transform .15s,border-color .15s,background .15s}
+.role:hover{transform:translateY(-3px);border-color:var(--sky);background:#FFFFFF14}
+.role .rl{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:26px}
+.role b{font-family:var(--display);font-size:21px}
+.role span{color:var(--muted-d);font-size:13px;line-height:1.6}
+.land .foot{color:var(--muted-d);font-size:12px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
+.land .foot button{color:var(--ice);text-decoration:underline}
+.loading{min-height:100vh;min-height:100dvh;display:grid;place-items:center;color:#fff;font-size:16px}
+.loading div{display:grid;justify-items:center;gap:14px}
+.spin{width:40px;height:40px;border-radius:50%;border:3px solid #ffffff33;border-top-color:#fff;animation:spin .8s linear infinite}
+.tagdemo{font-size:11px;font-weight:600;color:var(--ink2);background:#F0ECE6;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.dk .tagdemo{background:#fff}
+.out{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;border-radius:12px;font-size:14px;text-align:start}
+.out svg{width:19px;height:19px;flex:none}
+.mh .out:hover{background:#F7F2EA}
+.dk .out{color:#fff}.dk .out:hover{background:#ffffff1c}
+@media (max-width:760px){.roles{grid-template-columns:1fr;max-width:420px}.land h1{font-size:44px}}
+
 /* ---------- worker / phone ---------- */
-.worker-stage{display:flex;gap:40px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.worker-stage{display:flex;justify-content:center;align-items:center;min-height:100vh;min-height:100dvh;padding-block:20px}
 .side-note{max-width:380px;color:#fff;padding-top:30px}
 .side-note h2{font-family:var(--display);font-weight:900;font-size:34px;line-height:1.25;margin:0 0 10px;text-wrap:balance}
 .side-note h2 span{color:#E2C48F}
@@ -141,7 +167,7 @@ button.chip.gold:hover{background:#ead9bb}
 .empty{padding:26px 10px;text-align:center;color:var(--ink2);font-size:13px}
 
 /* ---------- dashboards ---------- */
-.dash{display:grid;grid-template-columns:240px minmax(0,1fr);background:var(--card);border-radius:22px;overflow:hidden;min-height:640px;box-shadow:0 30px 80px #0006}
+.dash{display:grid;grid-template-columns:240px minmax(0,1fr);background:var(--card);min-height:100vh;min-height:100dvh}
 .sb{display:flex;flex-direction:column;gap:4px;padding:18px 14px;border-inline-start:1px solid var(--rule)}
 .dk .sb{background:linear-gradient(180deg,#FF7A35,var(--dk-or));color:#fff;border:0}
 .sbb{display:flex;align-items:center;gap:10px;padding:4px 6px 18px}
@@ -246,7 +272,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background
 .ev{border-top:1px solid var(--line-d);padding:12px 0;font-size:14px;line-height:1.6}
 .ev small{display:block;color:var(--muted-d);font-size:12px}
 .ev .who{font-size:11px;padding:2px 8px;border-radius:999px;background:#FFFFFF14;color:var(--ice);margin-inline-end:6px}
-.toasts{position:fixed;z-index:60;bottom:calc(76px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:grid;gap:8px;width:min(460px,calc(100% - 32px))}
+.toasts{position:fixed;z-index:60;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:grid;gap:8px;width:min(460px,calc(100% - 32px))}
 .toast{background:#0A1330;color:#fff;border:1px solid #2B3B78;border-radius:14px;padding:12px 14px;font-size:14px;box-shadow:0 14px 40px #0008;animation:up .25s ease;line-height:1.6}
 .toast b{color:#9CC4FF}
 
@@ -255,6 +281,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background
   .sb{flex-direction:row;overflow-x:auto;border:0;border-bottom:1px solid var(--rule);padding:10px;gap:4px;align-items:center}
   .sbb{padding:0 4px 0 10px}
   .sbb small,.sbfoot{display:none}
+  .out{width:auto;white-space:nowrap}
   .nav{width:auto;white-space:nowrap;padding:9px 12px}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   .grid2{grid-template-columns:1fr}
@@ -264,8 +291,9 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background
   .content{padding:16px 12px 24px}
   .chead h2{font-size:21px}
   .kpi b{font-size:26px}
-  .phone{height:760px;border-width:0;padding:0;border-radius:0;box-shadow:none;background:none}
-  .screen{border-radius:28px}
+  .worker-stage{padding:0;display:block}
+  .phone{width:100%;height:100vh;height:100dvh;border-width:0;padding:0;border-radius:0;box-shadow:none;background:none}
+  .screen{border-radius:0}
   .island{display:none}
   .top-end .pill-demo{display:none}
   .api{grid-template-columns:1fr}
@@ -274,31 +302,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<header class="top wrap">
-  <div class="top-in">
-    <a class="brand" href="#worker" aria-label="وصل">
-      <svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4C8DFF"/><stop offset="1" stop-color="#1633FF"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#wg)"/><path d="M17 41C24 19 40 19 47 41" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/><circle cx="17" cy="43" r="6.5" fill="#fff"/><circle cx="47" cy="43" r="6.5" fill="#fff"/></svg>
-      <span><b>وصل</b><small>سجل واحد… والكل يشوفه</small></span>
-    </a>
-    <nav class="tabs" role="tablist" aria-label="الواجهات">
-      <button class="tab" role="tab" data-view="worker">تطبيق العامل · كريم</button>
-      <button class="tab" role="tab" data-view="client">لوحة العميل · دانكن</button>
-      <button class="tab" role="tab" data-view="maharah">لوحة مهارة</button>
-    </nav>
-    <div class="top-end">
-      <button class="btn-ghost" id="installBtn" hidden style="background:#1633FF;color:#fff;border-color:#1633FF">ثبّت التطبيق</button>
-      <span class="pill-demo">بيانات تجريبية</span>
-      <button class="btn-ghost" data-act="reset">ابدأ من جديد</button>
-    </div>
-  </div>
-</header>
-
-<div class="wrap"><div class="hint" id="hint"></div></div>
-<main class="wrap" id="app"></main>
-<div class="wrap"><p class="disclaimer">نموذج تجريبي من فريق وصل لهاكاثون مهاراثون (تحدي 3.3 «عقدك بين يديك»). كل الأرقام والأسماء بيانات تجريبية. دانكن مثال توضيحي لعميل، وليست شراكة فعلية. الربط مع قوى وأجير وزاتكا وأنظمة مهارة محاكاة فقط.</p></div>
-
-<button class="logbtn" data-act="log">السجل المشترك <span class="num" id="logn">0</span></button>
-<div id="drawer"></div>
+<main id="app"></main>
 <div id="modal"></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
@@ -337,7 +341,7 @@ const BR=[ // Dunkin branches (sample)
  {id:'rawdah',n:'فرع الروضة',x:520,y:170,need:9,here:9}
 ];
 function fresh(){return {
- view:'worker', wtab:'home', ctab:'home', mtab:'home',
+ view:'home', wtab:'home', ctab:'home', mtab:'home',
  shift:'idle', verifyStep:0,
  days:21, daily:190, allow:235,
  ded:{id:4613,label:'تأخير 20 دقيقة · الأربعاء',amt:45,status:'active',reason:''},
@@ -358,7 +362,11 @@ function fresh(){return {
  ],
  log:[], unseen:{worker:0,client:0,maharah:0}, drawer:false, modal:null, flash:{}
 };}
-let S=fresh();
+const KEY='wasl-demo-v2';
+const TRANSIENT=['view','modal','drawer','flash','pick','mreq','wtab','ctab','mtab','loading'];
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){const f=fresh();TRANSIENT.forEach(k=>delete j[k]);if(j.shift==='verifying')j.shift='idle';return Object.assign(f,j)}}catch(e){}return fresh()}
+function save(){try{const o={};Object.keys(S).forEach(k=>{if(!TRANSIENT.includes(k))o[k]=S[k]});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
+let S=load();
 const app=document.getElementById('app');
 
 /* ---------- helpers ---------- */
@@ -367,12 +375,10 @@ function presentDunkin(){return S.branches.reduce((a,b)=>a+b.here,0)}
 function needDunkin(){return S.branches.reduce((a,b)=>a+b.need,0)}
 const MAH_OTHER_HERE=1185, MAH_OTHER_NEED=1187; // other sample clients
 function time(){const d=new Date();return d.toLocaleTimeString('ar-SA-u-nu-latn',{hour:'numeric',minute:'2-digit'})}
-function emit(text,views){
+function emit(text,views,local){
   S.log.unshift({text,views,t:time()});
-  views.forEach(v=>{if(v!==S.view)S.unseen[v]++});
-  const names={worker:'تطبيق كريم',client:'لوحة دانكن',maharah:'لوحة مهارة'};
-  const others=views.filter(v=>v!==S.view).map(v=>names[v]);
-  toast(text+(others.length?'<br><b>وصل إلى: '+others.join(' و')+'</b>':''));
+  save();
+  if(local)toast(local);
 }
 function toast(h){const t=document.createElement('div');t.className='toast';t.innerHTML=h;const box=document.getElementById('toasts');box.appendChild(t);while(box.children.length>2)box.firstChild.remove();setTimeout(()=>t.remove(),4500)}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -380,31 +386,20 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 /* ---------- WORKER ---------- */
 function stepsDone(){return [S.shift==='on',S.ded.status!=='active',S.wnotes.some(n=>n.kind==='renew')]}
 function worker(){
-  const sd=stepsDone();
   return `<div class="worker-stage">
    <div class="phone"><div class="screen">
      <div class="island"></div>
      <div class="sbar" style="color:${S.wtab==='home'?'#fff':'#1f1a14'}"><span class="num">8:02</span><span>4G ▮▮▮</span></div>
-     ${S.wtab==='home'?wHome():wReqs()}
+     ${S.wtab==='home'?wHome():S.wtab==='me'?wMe():wReqs()}
      <div class="bnav">
        <button data-act="wtab" data-v="home" aria-current="${S.wtab==='home'}">${I.home}الرئيسية</button>
        <button data-act="wtab" data-v="reqs" aria-current="${S.wtab==='reqs'}">${I.list}طلباتي</button>
        <span class="plusb" aria-hidden="true">+</span>
        <button data-act="soon">${I.grid}خدماتي</button>
-       <button data-act="soon">${I.user}بروفايلي</button>
+       <button data-act="wtab" data-v="me" aria-current="${S.wtab==='me'}">${I.user}بروفايلي</button>
      </div>
      ${wOverlay()}
    </div></div>
-   <div class="side-note">
-     <h2>التطبيق اللي يستخدمونه اليوم… <span>وأضفنا له اللي كان ناقصه</span></h2>
-     <p>كريم كاشير عند دانكن في فرع الملقا، عن طريق مهارة. جرّب يومه:</p>
-     <ol class="steps">
-       <li class="${sd[0]?'done':''}">اضغط «ابدأ الشفت». التطبيق يتحقق إنه هو، وإن موقعه داخل نطاق الفرع.</li>
-       <li class="${sd[0]?'done':''}">شوف راتبك المتوقع يتحدث قدامك.</li>
-       <li class="${sd[1]?'done':''}">اعترض على خصم التأخير، وبعدها روح للوحة مهارة وشوف الاعتراض وصلها.</li>
-       <li class="${sd[2]?'done':''}">من لوحة مهارة أرسل تذكير تجديد العقد، وارجع هنا تلقاه.</li>
-     </ol>
-   </div>
   </div>`;
 }
 function wHome(){
@@ -436,6 +431,18 @@ function wHome(){
        </div>
      </div>
    </div></div>`;
+}
+function wMe(){
+  return `<div class="pscroll" style="padding:56px 14px 20px"><div style="display:grid;gap:12px">
+   <div class="pc" style="text-align:center"><div class="av" style="margin:0 auto 8px;background:var(--goldbg);color:var(--gold2);width:64px;height:64px;font-size:26px">ك</div><h3>كريم</h3><div class="mut">كاشير · دانكن · فرع الملقا</div><div style="margin-top:8px"><span class="tagdemo">بيانات تجريبية</span></div></div>
+   <div class="pc" style="display:grid;gap:8px;font-size:14px">
+     <div class="row between"><span class="mut">الرقم الوظيفي</span><b class="num">MH-20417</b></div>
+     <div class="row between"><span class="mut">العقد</span><b>ينتهي 29 يناير 2027</b></div>
+     <div class="row between"><span class="mut">الراتب الأساسي اليومي</span><b class="num">${S.daily} ريال</b></div>
+     <div class="row between"><span class="mut">اللغة</span><b>العربية</b></div>
+   </div>
+   <button class="pc" data-act="logout" style="color:var(--bad);font-weight:700;text-align:center">تسجيل خروج</button>
+  </div></div>`;
 }
 function wReqs(){
   const d=S.ded;
@@ -478,12 +485,12 @@ function client(){
    <aside class="sb">
      <div class="sbb"><div class="lg">DD</div><div><b>دانكن</b><small>بوابة العميل · مثال توضيحي</small></div></div>
      ${tabs.map(([k,t,ic])=>`<button class="nav" data-act="ctab" data-v="${k}" aria-current="${S.ctab===k}">${ic}${t}${k==='reqs'&&open?`<span class="cnt num">${open}</span>`:''}</button>`).join('')}
-     <div class="sbfoot">مدير حسابك في مهارة<br><b>متصل عبر وصل</b></div>
+     <div style="margin-top:auto"></div><button class="out" data-act="logout">${I.user}تسجيل خروج</button>
    </aside>
    <section class="content">${{home:cHome,staff:cStaff,reqs:cReqs,recon:cRecon,ai:cAI}[S.ctab]()}</section>
   </div>`;
 }
-function cHead(t){return `<div class="chead"><h2>${t}</h2><span class="live">مباشر</span><div class="end"><button class="btn pk" data-act="newreq">+ طلب جديد</button><button class="btn or" data-act="ctab" data-v="ai">اسأل مدير الحساب</button></div></div>`}
+function cHead(t){return `<div class="chead"><h2>${t}</h2><span class="live">مباشر</span><span class="tagdemo">بيانات تجريبية · مثال توضيحي</span><div class="end"><button class="btn pk" data-act="newreq">+ طلب جديد</button><button class="btn or" data-act="ctab" data-v="ai">اسأل مدير الحساب</button></div></div>`}
 function cKpis(){
   const open=S.reqs.filter(r=>r.status!=='done').length;
   return `<div class="kpis">
@@ -567,7 +574,7 @@ function maharah(){
    <aside class="sb">
      <div class="sbb"><div class="lg">م</div><div><b>مهارة</b><small>لوحة وصل · لمدير الحساب</small></div></div>
      ${tabs.map(([k,t,ic])=>`<button class="nav" data-act="mtab" data-v="${k}" aria-current="${S.mtab===k}">${ic}${t}${k==='home'&&pend?`<span class="cnt num">${pend}</span>`:''}${k==='contracts'&&S.reminders.some(r=>!r.sent)?`<span class="cnt num" style="background:var(--gold)">${S.reminders.filter(r=>!r.sent).length}</span>`:''}</button>`).join('')}
-     <div class="sbfoot">مدير حساب<br><b>فريق مهارة</b></div>
+     <div style="margin-top:auto"></div><button class="out" data-act="logout">${I.user}تسجيل خروج</button>
    </aside>
    <section class="content">${{home:mHome,pay:mPay,contracts:mContracts,api:mApi}[S.mtab]()}</section>
   </div>`;
@@ -579,7 +586,7 @@ function mHome(){
   S.reqs.forEach(r=>items.push(`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':'gold'}">${r.type==='شكوى'?'شكوى':'طلب'}</span><div><b>${r.type} · دانكن · ${r.branchName}</b><span class="mut">من بوابة العميل · ${r.t}${r.note?' · '+esc(r.note):''}</span></div><div class="acts">${r.status==='done'?'<span class="chip good">تم ✓</span>':`<button class="btn gd sm" data-act="approve-req" data-v="${r.id}">اعتمد ونفّذ</button>`}</div></div>`));
   if(S.ded.status!=='active') items.push(`<div class="item ${S.flash.disp?'new':''}"><span class="chip warn">اعتراض</span><div><b>كريم · خصم تأخير #${S.ded.id} · ${S.ded.amt} ريال</b><span class="mut">من تطبيق العامل · السبب: ${esc(S.ded.reason)}</span></div><div class="acts">${S.ded.status==='disputed'?`<button class="btn gn sm" data-act="disp-ok">قبول</button><button class="btn ol sm" data-act="disp-no">رفض</button>`:S.ded.status==='refunded'?'<span class="chip good">انقبل · رجع المبلغ</span>':'<span class="chip bad">انرفض</span>'}</div></div>`);
   S.tickets.forEach(t=>items.push(`<div class="item ${S.flash['t_'+t.id]?'new':''}"><span class="chip blue">${t.kind}</span><div><b>${esc(t.title)}</b><span class="mut">${t.sub}</span></div>${t.done?'':`<div class="acts"><button class="btn ol sm" data-act="ticket-done" data-v="${t.id}">تم الرد</button></div>`}</div>`));
-  return `<div class="chead"><h2>لوحة المتابعة</h2><span class="live">مباشر · كل العملاء</span></div>
+  return `<div class="chead"><h2>لوحة المتابعة</h2><span class="live">مباشر · كل العملاء</span><span class="tagdemo">بيانات تجريبية</span></div>
   <div class="kpis">
    <div class="kpi"><span>حاضرين الحين</span><b class="num">${fmt(here)}</b><small style="color:var(--good)">من ${fmt(need)}</small></div>
    <div class="kpi"><span>ما حضروا</span><b class="num" style="color:var(--bad)">${need-here}</b><small style="color:var(--bad)">نتابعهم الحين</small></div>
@@ -667,17 +674,29 @@ const HINTS={
  client:'<i>جرّب</i><span>ارفع <b>طلب جديد</b>، اسأل <b>مدير الحساب الذكي</b>، أو طابق <b>شيت الحضور</b>. كل شي يوصل للوحة مهارة. (دانكن هنا مثال توضيحي)</span>',
  maharah:'<i>جرّب</i><span>أرسل <b>بديل</b> للغايب، اقبل <b>اعتراض كريم</b>، ولّد <b>الرواتب والفاتورة</b>، وأرسل <b>تذكير تجديد</b>. شوف كيف يتحدث تطبيق كريم ولوحة دانكن.</span>'
 };
+function landing(){
+  return `<div class="land wrap">
+   <div class="lg"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4C8DFF"/><stop offset="1" stop-color="#1633FF"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#wg)"/><path d="M17 41C24 19 40 19 47 41" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/><circle cx="17" cy="43" r="6.5" fill="#fff"/><circle cx="47" cy="43" r="6.5" fill="#fff"/></svg>
+   <h1>وصل</h1><p class="tag">سجل واحد… والكل يشوفه</p></div>
+   <h2>ادخل كـ</h2>
+   <div class="roles">
+     <button class="role" data-act="enter" data-v="worker"><div class="rl" style="background:linear-gradient(160deg,#C4A06A,#8E6C38)">ك</div><b>عامل</b><span>كريم · تطبيق My Maharah</span></button>
+     <button class="role" data-act="enter" data-v="client"><div class="rl" style="background:#fff;color:#DA1884;font-size:20px">DD</div><b>عميل</b><span>دانكن · بوابة العميل</span></button>
+     <button class="role" data-act="enter" data-v="maharah"><div class="rl" style="background:linear-gradient(160deg,#C4A06A,#8E6C38)">م</div><b>مهارة</b><span>مدير الحساب</span></button>
+   </div>
+   <div class="foot"><span>بيانات تجريبية · دانكن مثال توضيحي · الربط مع قوى وزاتكا محاكاة</span><button id="installBtn" hidden>ثبّت التطبيق</button>${S.log.length?'<button data-act="reset">ابدأ من جديد</button>':''}</div>
+  </div>`;
+}
 function render(){
-  document.querySelectorAll('.tab').forEach(t=>{const v=t.dataset.view;t.setAttribute('aria-selected',v===S.view);t.innerHTML=t.textContent.replace(/\s+$/,'')+(S.unseen[v]&&v!==S.view?'<span class="dot"></span>':'')});
-  document.getElementById('hint').innerHTML=HINTS[S.view];
-  app.innerHTML={worker,client,maharah}[S.view]();
+  if(S.loading){app.innerHTML=`<div class="loading"><div><div class="spin"></div>جارٍ تسجيل الدخول…</div></div>`;document.getElementById('modal').innerHTML='';return}
+  app.innerHTML=S.view==='home'?landing():{worker,client,maharah}[S.view]();
+  document.title=S.view==='home'?'وصل':{worker:'My Maharah · كريم',client:'دانكن · بوابة العميل',maharah:'مهارة · لوحة وصل'}[S.view];
   document.getElementById('modal').innerHTML=modalHtml();
-  document.getElementById('logn').textContent=S.log.length;
-  document.getElementById('drawer').innerHTML=S.drawer?`<aside class="drawer" role="dialog" aria-label="السجل المشترك"><div class="row between"><h3>السجل المشترك</h3><button class="btn-ghost" data-act="log">إغلاق</button></div><p>كل حركة تنسجل مرة وحدة، والكل يشوفها: العامل والعميل ومهارة.</p><div style="overflow-y:auto">${S.log.length?S.log.map(e=>`<div class="ev">${e.text}<small>${e.views.map(v=>`<span class="who">${{worker:'كريم',client:'دانكن',maharah:'مهارة'}[v]}</span>`).join('')} ${e.t}</small></div>`).join(''):'<p>ما فيه حركات للحين. ابدأ الشفت من تطبيق كريم.</p>'}</div></aside>`:'';
   const c=document.getElementById('chat');if(c)c.scrollTop=c.scrollHeight;
   S.flash={};
+  save();
 }
-function go(v){S.view=v;S.unseen[v]=0;try{history.replaceState(null,'','#'+v)}catch(e){location.hash=v}render();window.scrollTo({top:0})}
+function go(v){S.view=v;S.modal=null;try{history.pushState(null,'',v==='home'?location.pathname:'#'+v)}catch(e){location.hash=v==='home'?'':v}render();window.scrollTo({top:0})}
 
 /* ---------- actions ---------- */
 function startShift(){
@@ -689,7 +708,7 @@ function startShift(){
     const m=S.branches.find(b=>b.id==='malqa');m.here=Math.min(m.need,m.here+1);
     S.flash={sal:1,b_malqa:1,w_كريم:1,dk:1};
     render();
-    emit('كريم بدأ الشفت 8:02 في دانكن · فرع الملقا. الهوية ✓ والموقع داخل النطاق ✓. راتبه المتوقع صار '+fmt(expected())+' ريال.',['worker','client','maharah']);
+    emit('كريم بدأ الشفت 8:02 في دانكن · فرع الملقا. الهوية ✓ والموقع داخل النطاق ✓. راتبه المتوقع صار '+fmt(expected())+' ريال.',['worker','client','maharah'],'بدأ شفتك ✓');
   },ms));
 }
 function ask(q){
@@ -697,39 +716,39 @@ function ask(q){
   S.chat.push({me:true,t:q});
   let a=answer(q);
   if(!a){const id='q'+Date.now();S.tickets.unshift({id,kind:'سؤال',title:'دانكن · '+q,sub:'من مدير الحساب الذكي · يحتاج رد',done:false,src:'client'});S.flash['t_'+id]=1;
-    a='سؤالك يحتاج مدير حسابك، حوّلته له تذكرة في مهارة الحين. بتلقى الرد هنا.';S.chat.push({me:false,t:a});render();emit('دانكن سأل مدير الحساب الذكي، وتحوّل السؤال تذكرة لمهارة.',['client','maharah']);return}
+    a='سؤالك يحتاج مدير حسابك، حوّلته له تذكرة في مهارة الحين. بتلقى الرد هنا.';S.chat.push({me:false,t:a});render();emit('دانكن سأل مدير الحساب الذكي، وتحوّل السؤال تذكرة لمهارة.',['client','maharah'],'تحوّل سؤالك لمدير حسابك');return}
   S.chat.push({me:false,t:a});render();
 }
 document.addEventListener('click',e=>{
-  const tab=e.target.closest('.tab');if(tab){go(tab.dataset.view);return}
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act,v=el.dataset.v;
   if(a==='close-bg'&&e.target!==el)return;
   switch(a){
-   case 'reset':S=fresh();go('worker');toast('رجعنا كل شي لبداية اليوم.');break;
-   case 'log':S.drawer=!S.drawer;render();break;
-   case 'soon':toast('هذي الصفحة موجودة في تطبيق My Maharah الحالي، وما غيرنا فيها.');break;
+   case 'reset':S=fresh();save();go('home');break;
+   case 'enter':S.loading=true;render();setTimeout(()=>{S.loading=false;S.wtab='home';S.ctab='home';S.mtab='home';go(v)},650);break;
+   case 'logout':go('home');break;
+   case 'soon':toast('هذي الخدمة غير متاحة في النسخة التجريبية.');break;
    case 'wtab':S.wtab=v;if(v==='reqs')S.wnotes.forEach(n=>n.read=true);render();break;
    case 'start':startShift();break;
    case 'dispute':S.modal='dispute';S.pick=null;render();break;
    case 'reason':S.pick=v;render();break;
    case 'close':case 'close-bg':S.modal=null;render();break;
-   case 'send-dispute':S.ded.status='disputed';S.ded.reason=S.pick;S.modal=null;S.flash.disp=1;render();emit('كريم اعترض على خصم التأخير #4613 (45 ريال) من التطبيق.',['worker','maharah']);break;
-   case 'disp-ok':S.ded.status='refunded';S.wnotes.unshift({kind:'ok',title:'انقبل اعتراضك ✓',body:'رجعنا خصم التأخير 45 ريال، وراتبك المتوقع صار '+fmt(expected())+' ريال.',read:false});S.flash.payk=1;render();emit('مهارة قبلت اعتراض كريم ورجع 45 ريال. راتبه المتوقع صار '+fmt(expected())+' ريال.',['maharah','worker']);break;
-   case 'disp-no':S.ded.status='rejected';S.wnotes.unshift({kind:'no',title:'تمت مراجعة اعتراضك',body:'الخصم باقي حسب سجل الحضور. تقدر تتواصل مع مدير حسابك.',read:false});render();emit('مهارة راجعت اعتراض كريم وأبقت الخصم.',['maharah','worker']);break;
+   case 'send-dispute':S.ded.status='disputed';S.ded.reason=S.pick;S.modal=null;S.flash.disp=1;render();emit('كريم اعترض على خصم التأخير #4613 (45 ريال) من التطبيق.',['worker','maharah'],'انرسل اعتراضك لمهارة');break;
+   case 'disp-ok':S.ded.status='refunded';S.wnotes.unshift({kind:'ok',title:'انقبل اعتراضك ✓',body:'رجعنا خصم التأخير 45 ريال، وراتبك المتوقع صار '+fmt(expected())+' ريال.',read:false});S.flash.payk=1;render();emit('مهارة قبلت اعتراض كريم ورجع 45 ريال. راتبه المتوقع صار '+fmt(expected())+' ريال.',['maharah','worker'],'قبلت الاعتراض ورجع المبلغ للعامل');break;
+   case 'disp-no':S.ded.status='rejected';S.wnotes.unshift({kind:'no',title:'تمت مراجعة اعتراضك',body:'الخصم باقي حسب سجل الحضور. تقدر تتواصل مع مدير حسابك.',read:false});render();emit('مهارة راجعت اعتراض كريم وأبقت الخصم.',['maharah','worker'],'رفضت الاعتراض');break;
    case 'ctab':S.ctab=v;render();break;
    case 'mtab':S.mtab=v;render();break;
    case 'newreq':S.modal='newreq';S.mreq={type:'عامل إضافي',branch:'olaya',note:''};render();break;
    case 'rtype':S.mreq.type=v;S.mreq.branch=document.getElementById('rbranch').value;S.mreq.note=document.getElementById('rnote').value;render();break;
-   case 'approve-req':{const r=S.reqs.find(x=>x.id===v);r.status='done';S.flash['r_'+r.id]=1;render();emit('مهارة اعتمدت طلب دانكن ('+r.type+' · '+r.branchName+') ونفّذته.',['maharah','client']);break}
-   case 'ticket-done':{const t=S.tickets.find(x=>x.id===v);t.done=true;t.sub='رد مدير الحساب ✓';S.chat.push({me:false,t:'مدير حسابك في مهارة رد على سؤالك: تم ✓ وتواصلنا معكم بالتفاصيل.'});render();emit('مدير الحساب في مهارة رد على سؤال دانكن.',['maharah','client']);break}
-   case 'send-repl':{S.absent.status='replacement';S.flash.b_nakheel=1;S.flash['w_سالم']=1;S.reqs.unshift({id:'rp'+Date.now(),type:'بديل',branch:'nakheel',branchName:'فرع النخيل',note:'بديل تلقائي لغياب سالم',status:'done',t:time()});render();emit('مهارة شافت غياب سالم وأرسلت بديل لدانكن · فرع النخيل.',['maharah','client']);break}
-   case 'loadsheet':S.sheet='loaded';render();emit('دانكن رفع شيت حضور نوفمبر، ووصل طابقه: فيه فرق يوم في فرع العليا.',['client','maharah']);break;
-   case 'approvesheet':S.sheet='approved';render();emit('دانكن اعتمد مطابقة الحضور. الفاتورة تطلع على نفس الأرقام.',['client','maharah']);break;
-   case 'gen':S.payroll='generated';render();emit('مهارة ولّدت مسير الرواتب وفاتورة دانكن من نفس سجل الحضور.',['maharah','client','worker']);break;
+   case 'approve-req':{const r=S.reqs.find(x=>x.id===v);r.status='done';S.flash['r_'+r.id]=1;render();emit('مهارة اعتمدت طلب دانكن ('+r.type+' · '+r.branchName+') ونفّذته.',['maharah','client'],'اعتمدت الطلب ✓');break}
+   case 'ticket-done':{const t=S.tickets.find(x=>x.id===v);t.done=true;t.sub='رد مدير الحساب ✓';S.chat.push({me:false,t:'مدير حسابك في مهارة رد على سؤالك: تم ✓ وتواصلنا معكم بالتفاصيل.'});render();emit('مدير الحساب في مهارة رد على سؤال دانكن.',['maharah','client'],'انرسل الرد للعميل');break}
+   case 'send-repl':{S.absent.status='replacement';S.flash.b_nakheel=1;S.flash['w_سالم']=1;S.reqs.unshift({id:'rp'+Date.now(),type:'بديل',branch:'nakheel',branchName:'فرع النخيل',note:'بديل تلقائي لغياب سالم',status:'done',t:time()});render();emit('مهارة شافت غياب سالم وأرسلت بديل لدانكن · فرع النخيل.',['maharah','client'],'انرسل بديل لفرع النخيل');break}
+   case 'loadsheet':S.sheet='loaded';render();emit('دانكن رفع شيت حضور نوفمبر، ووصل طابقه: فيه فرق يوم في فرع العليا.',['client','maharah'],'انرفع الشيت وتمت المطابقة');break;
+   case 'approvesheet':S.sheet='approved';render();emit('دانكن اعتمد مطابقة الحضور. الفاتورة تطلع على نفس الأرقام.',['client','maharah'],'اعتمدت المطابقة ✓');break;
+   case 'gen':S.payroll='generated';render();emit('مهارة ولّدت مسير الرواتب وفاتورة دانكن من نفس سجل الحضور.',['maharah','client','worker'],'تم توليد الرواتب والفاتورة');break;
    case 'remind':{const r=S.reminders.find(x=>x.id===v);r.sent=true;S.flash['rm_'+r.id]=1;
      if(r.name==='كريم')S.wnotes.unshift({kind:'renew',title:'عقدك يخلص بعد 3 شهور',body:'عقد العمل ينتهي 29 يناير 2027. جدّده عن طريق قوى قبل لا يفوتك.',read:false});
-     render();emit('مهارة أرسلت تذكير تجديد ('+r.what+') لـ'+r.name+'، والتذكير يوديه لقوى.',r.name==='كريم'?['maharah','worker']:['maharah']);break}
+     render();emit('مهارة أرسلت تذكير تجديد ('+r.what+') لـ'+r.name+'، والتذكير يوديه لقوى.',r.name==='كريم'?['maharah','worker']:['maharah'],'انرسل التذكير لـ'+r.name);break}
    case 'ask':ask(v);break;
   }
 });
@@ -741,27 +760,29 @@ document.addEventListener('submit',e=>{
     const br=S.branches.find(x=>x.id===b);const id='r'+Date.now();
     S.reqs.unshift({id,type:S.mreq.type,branch:b,branchName:br.n,note:n,status:'open',t:time()});
     S.modal=null;S.flash['r_'+id]=1;S.ctab='reqs';render();
-    emit('دانكن رفع طلب '+S.mreq.type+' لـ'+br.n+' من البوابة.',['client','maharah']);
+    emit('دانكن رفع طلب '+S.mreq.type+' لـ'+br.n+' من البوابة.',['client','maharah'],'انرسل طلبك لمهارة');
   }
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.modal||S.drawer)){S.modal=null;S.drawer=false;render()}});
-function fromHash(){const h=(location.hash||'').slice(1);if(['worker','client','maharah'].includes(h)){S.view=h;S.unseen[h]=0}render()}
-window.addEventListener('hashchange',fromHash);
+function fromHash(){const h=(location.hash||'').slice(1);S.view=['worker','client','maharah'].includes(h)?h:'home';S.modal=null;render()}
+window.addEventListener('hashchange',fromHash);window.addEventListener('popstate',fromHash);
+window.addEventListener('storage',e=>{if(e.key!==KEY)return;const keep={};TRANSIENT.forEach(k=>keep[k]=S[k]);S=Object.assign(load(),keep);S.flash={};render()});
 fromHash();
 })();
 </script>
 
-<div class="modal" id="iosHint" hidden><div class="mbox"><h3>ثبّت وصل على جوالك</h3><p style="margin:0;line-height:1.9">في سفاري اضغط زر <b>المشاركة</b> تحت، بعدين <b>«إضافة إلى الشاشة الرئيسية»</b>.<br>في أندرويد من قائمة كروم اختر <b>«تثبيت التطبيق»</b>.</p><button class="btn gd" id="iosClose">تمام</button></div></div>
+<div class="modal" id="iosHint" hidden><div class="mbox"><h3>ثبّت وصل على جوالك</h3><p style="margin:0;line-height:1.9">في سفاري اضغط زر <b>المشاركة</b>، بعدين <b>«إضافة إلى الشاشة الرئيسية»</b>.<br>في أندرويد من قائمة كروم اختر <b>«تثبيت التطبيق»</b>.</p><button class="btn gd" id="iosClose">تمام</button></div></div>
 <script>
 (function(){
   if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
-  const b=document.getElementById('installBtn'),h=document.getElementById('iosHint');let dp=null;
-  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-  if(!standalone) b.hidden=false;
-  addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;b.hidden=false});
-  addEventListener('appinstalled',()=>{b.hidden=true});
-  b.addEventListener('click',async e=>{e.stopPropagation();if(dp){dp.prompt();await dp.userChoice;dp=null}else{h.hidden=false}});
-  document.getElementById('iosClose').addEventListener('click',e=>{e.stopPropagation();h.hidden=true});
+  let dp=null;const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  function sync(){const b=document.getElementById('installBtn');if(b)b.hidden=standalone}
+  new MutationObserver(sync).observe(document.getElementById('app'),{childList:true});sync();
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
+  document.addEventListener('click',async e=>{
+    if(e.target.id==='installBtn'){e.stopPropagation();if(dp){dp.prompt();await dp.userChoice;dp=null}else document.getElementById('iosHint').hidden=false}
+    if(e.target.id==='iosClose')document.getElementById('iosHint').hidden=true;
+  },true);
 })();
 </script>
 </body></html>
