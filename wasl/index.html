@@ -1034,7 +1034,11 @@ fromHash();
 <div class="modal" id="iosHint" hidden><div class="mbox"><h3>ثبّت وصل على جوالك</h3><p style="margin:0;line-height:1.9">في سفاري اضغط زر <b>المشاركة</b>، بعدين <b>«إضافة إلى الشاشة الرئيسية»</b>.<br>في أندرويد من قائمة كروم اختر <b>«تثبيت التطبيق»</b>.</p><button class="btn gd" id="iosClose">تمام</button></div></div>
 <script>
 (function(){
-  if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+  if('serviceWorker' in navigator){
+    const had=!!navigator.serviceWorker.controller;let reloaded=false;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!reloaded){reloaded=true;location.reload()}});
+    addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{r.update().catch(()=>{});document.addEventListener('visibilitychange',()=>{if(!document.hidden)r.update().catch(()=>{})})}).catch(()=>{}));
+  }
   let dp=null;const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
   function sync(){const b=document.getElementById('installBtn');if(b)b.hidden=standalone}
   new MutationObserver(sync).observe(document.getElementById('app'),{childList:true});sync();
