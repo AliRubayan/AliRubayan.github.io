@@ -285,6 +285,32 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background
 .rchips i{font-style:normal;font-size:12px;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:3px 8px;color:var(--ink2)}
 .rchips b{color:var(--ink);font-size:12px}
 .item>div:nth-child(2){min-width:0;flex:1}
+.rq{display:grid;gap:12px}
+.rq.new{animation:hl 2.4s ease}
+.rqh{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rqh b{font-family:var(--display);font-size:17px}
+.rq .rchips{margin:0}
+.rqnote{margin:0;font-size:14px;line-height:1.7}
+.steps2{overflow:hidden;list-style:none;margin:0;padding:4px 0 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.steps2 li{display:grid;justify-items:center;gap:4px;text-align:center;font-size:12.5px;color:var(--ink2);position:relative;padding-top:2px}
+.steps2 li::before{content:"";position:absolute;top:15px;left:50%;width:100%;height:3px;background:#EFE7DA;z-index:0}
+.steps2 li:first-child::before{display:none}
+.steps2 li.done::before,.steps2 li.now::before{background:var(--good)}
+.steps2 i{position:relative;z-index:1;font-style:normal;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#EFE7DA;color:var(--ink2);font-weight:700;font-size:13px}
+.steps2 li.done i{background:var(--good);color:#fff}
+.steps2 li.now i{background:#fff;color:var(--dk-or);box-shadow:0 0 0 3px var(--dk-or)}
+.steps2 li.done span,.steps2 li.now span{color:var(--ink);font-weight:600}
+.steps2 small{font-size:11px;min-height:14px}
+.rqnow{background:#FFF6EC;border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.7}
+.thread{border-top:1px solid var(--rule);padding-top:10px;display:grid;gap:8px;margin-top:8px}
+.rq .thread{margin-top:0}
+.thh{font-size:12px;font-weight:700;color:var(--ink2)}
+.tm{justify-self:start;max-width:88%;background:#F4EFE8;border-radius:14px;border-start-start-radius:4px;padding:8px 12px;display:grid;gap:2px;font-size:14px;line-height:1.6}
+.tm b{font-size:11px;color:var(--ink2)}
+.tm small{font-size:10.5px;color:var(--ink2)}
+.tm.mine{justify-self:end;background:#FFE3D3;border-start-start-radius:14px;border-start-end-radius:4px}
+.mh .tm.mine{background:var(--goldbg)}
+.rmsg input{padding:8px 12px}
 /* ---------- centered chat ---------- */
 .cl{flex:1;display:flex;flex-direction:column;min-height:0;height:calc(100dvh - 120px);max-height:calc(100dvh - 120px)}
 .cl.empty{justify-content:center}
@@ -705,13 +731,33 @@ function cStaff(){
   <div class="panel"><h3>العمال الحين<span class="mut">عيّنة من العمال · بيانات تجريبية</span></h3><div class="tw"><table><thead><tr><th>العامل</th><th>الدور</th><th>الفرع</th><th>الحالة</th><th></th></tr></thead><tbody>${ws.map(([n,r,b])=>`<tr class="${S.flash['w_'+n]?'hl':''}"><td><b>${n}</b></td><td>${r}</td><td>${S.branches.find(x=>x.id===b).n}</td><td>${st(n,b)}</td><td><button class="btn ol sm" data-act="viol" data-v="${n}">سجّل مخالفة</button></td></tr>`).join('')}</tbody></table></div></div>
   <div class="panel"><h3>كل الفروع</h3>${bTable(S.branches)}</div>`;
 }
-function reqStatus(r){return r.status==='done'?'<span class="chip good">معتمد · تم التنفيذ</span>':'<span class="chip warn">وصل مهارة · قيد المتابعة</span>'}
+function reqStatus(r){return r.status==='done'?'<span class="chip good">تم التنفيذ ✓</span>':r.status==='work'?'<span class="chip blue">قيد التنفيذ</span>':'<span class="chip warn">عند مدير الحساب</span>'}
+function reqNow(r){
+  if(r.status==='done')return r.type==='شكوى'?'عولجت الشكوى وأُغلقت. تقدر تكمل النقاش تحت لو باقي شي.':'تم التنفيذ. العامل معتمد للفرع وبيظهر في متابعة العمالة.';
+  if(r.status==='work')return {'عامل إضافي':'مهارة رشّحت عامل مناسب وتجهّزه للفرع.','بديل':'مهارة اختارت البديل وهو في طريقه للفرع.','شكوى':'مدير الحساب يتحقق من الشكوى مع المشرف والعامل.'}[r.type];
+  return 'مدير الحساب استلم طلبك ويراجعه الحين.';
+}
+function reqSteps(r){
+  const i={open:1,work:2,done:3}[r.status];
+  const st=[['أرسلت الطلب',r.t],['استلمه مدير الحساب',r.t],['قيد التنفيذ',r.tw||''],[r.type==='شكوى'?'تمت المعالجة':'تم التنفيذ',r.td||'']];
+  return `<ol class="steps2">${st.map(([l,t],k)=>`<li class="${k<i||r.status==='done'?'done':k===i?'now':''}"><i>${k<i||r.status==='done'?'✓':k+1}</i><span>${l}</span><small class="num">${(k<i||r.status==='done')?t:k===i?'الحين':''}</small></li>`).join('')}</ol>`;
+}
+function reqThread(r,side){
+  const ms=r.msgs||[];
+  return `<div class="thread"><div class="thh">${side==='c'?'محادثة مع مدير الحساب':'محادثة مع العميل'}</div>
+    ${ms.map(m=>`<div class="tm ${m.from===side?'mine':''}"><b>${m.from==='m'?'مدير الحساب · مهارة':'دانكن'}</b><span>${esc(m.t)}</span><small class="num">${m.at}</small></div>`).join('')}
+    <form class="rmsg inrow" data-rid="${r.id}" data-side="${side}"><input type="text" placeholder="${side==='c'?'اكتب لمدير الحساب…':'رد على العميل…'}" aria-label="رسالة" autocomplete="off"><button class="btn ${side==='c'?'or':'gd'} sm" type="submit">أرسل</button></form></div>`;
+}
 function cReqs(){
   return `${cHead('الطلبات')}
-  <div class="panel"><h3>طلباتك<span class="mut">بدل الإيميلات</span></h3>
-   ${S.reqs.length?S.reqs.map(r=>`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':r.type==='بديل'?'blue':'gold'}">${r.type}</span><div><b>${r.type==='عامل إضافي'?'عامل إضافي':r.type==='بديل'?'بديل لعامل':'شكوى'} · ${r.branchName}</b><span class="mut">${r.note?esc(r.note)+' · ':''}${r.t}</span>${reqChips(r)}</div><div class="acts">${reqStatus(r)}</div></div>`).join('')
-   :`<div class="empty">ما رفعت طلبات اليوم.<br><button class="btn pk" style="margin-top:10px" data-act="newreq">ارفع أول طلب</button></div>`}
-  </div>`;
+   ${S.reqs.length?S.reqs.map(r=>`<div class="panel rq ${S.flash['r_'+r.id]?'new':''}">
+     <div class="rqh"><span class="chip ${r.type==='شكوى'?'bad':r.type==='بديل'?'blue':'gold'}">${r.type}</span><b>${r.type==='عامل إضافي'?'عامل إضافي':r.type==='بديل'?'بديل لعامل':'شكوى'} · ${r.branchName}</b><span class="mut num">${r.t}</span><span style="margin-inline-start:auto">${reqStatus(r)}</span></div>
+     ${reqChips(r)}${r.note?`<p class="rqnote">${esc(r.note)}</p>`:''}
+     ${reqSteps(r)}
+     <div class="rqnow"><b>وش صاير الحين:</b> ${reqNow(r)}</div>
+     ${reqThread(r,'c')}
+   </div>`).join('')
+   :`<div class="panel"><div class="empty">ما رفعت طلبات اليوم.<br><button class="btn pk" style="margin-top:10px" data-act="newreq">ارفع أول طلب</button></div></div>`}`;
 }
 function cRecon(){
   const rows=[['فرع الملقا',9,21,21],['فرع العليا',9,7,8],['فرع النخيل',8,8,8],['فرع الياسمين',8,10,10]];
@@ -794,7 +840,7 @@ function mHome(){
   const here=MAH_OTHER_HERE+presentDunkin(), need=MAH_OTHER_NEED+needDunkin();
   const kareemLate=S.shift==='idle'||S.shift==='verifying';
   const items=[];
-  S.reqs.forEach(r=>items.push(`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':'gold'}">${r.type==='شكوى'?'شكوى':'طلب'}</span><div><b>${r.type} · دانكن · ${r.branchName}</b><span class="mut">من بوابة العميل · ${r.t}${r.note?' · '+esc(r.note):''}</span>${reqChips(r)}</div><div class="acts">${r.status==='done'?'<span class="chip good">تم ✓</span>':`<button class="btn gd sm" data-act="approve-req" data-v="${r.id}">اعتمد ونفّذ</button>`}</div></div>`));
+  S.reqs.forEach(r=>items.push(`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':'gold'}">${r.type==='شكوى'?'شكوى':'طلب'}</span><div><b>${r.type} · دانكن · ${r.branchName}</b><span class="mut">من بوابة العميل · ${r.t}${r.note?' · '+esc(r.note):''}</span>${reqChips(r)}${reqThread(r,'m')}</div><div class="acts">${r.status==='done'?'<span class="chip good">تم ✓</span>':`${r.status==='work'?'<span class="chip blue">قيد التنفيذ</span>':`<button class="btn ol sm" data-act="start-req" data-v="${r.id}">ابدأ التنفيذ</button>`}<button class="btn gd sm" data-act="approve-req" data-v="${r.id}">اعتمد ونفّذ</button>`}</div></div>`));
   if(S.ded.status!=='active') items.push(`<div class="item ${S.flash.disp?'new':''}"><span class="chip warn">اعتراض</span><div><b>كريم · خصم تأخير #${S.ded.id} · ${S.ded.amt} ريال</b><span class="mut">من تطبيق العامل · السبب: ${esc(S.ded.reason)}</span></div><div class="acts">${S.ded.status==='disputed'?`<button class="btn gn sm" data-act="disp-ok">قبول</button><button class="btn ol sm" data-act="disp-no">رفض</button>`:S.ded.status==='refunded'?'<span class="chip good">انقبل · رجع المبلغ</span>':'<span class="chip bad">انرفض</span>'}</div></div>`);
   if(S.sheet!=='none') items.push(`<div class="item"><span class="chip warn">فرق</span><div><b>فرق بين شيت دانكن وسجلنا · فرع العليا · يوم واحد</b><span class="mut">تذكرة واحدة يشوفها الكل، والعامل يقدر يعترض فيها</span></div><div class="acts">${S.sheet==='approved'?'<span class="chip good">العميل اعتمد ✓</span>':'<span class="chip grey">بانتظار العميل</span>'}</div></div>`);
   S.viols.forEach(v=>items.push(`<div class="item"><span class="chip bad">مخالفة</span><div><b>${v.worker} · ${esc(v.type)}</b><span class="mut">من مدير فرع دانكن · ${v.t}${v.status==='disputed'?' · العامل اعترض':''}</span></div><div class="acts">${v.status==='disputed'?'<span class="chip warn">اعتراض</span>':'<span class="chip grey">مسجلة</span>'}</div></div>`));
@@ -1062,14 +1108,15 @@ document.addEventListener('click',e=>{
    case 'mtab':S.mtab=v;render();break;
    case 'newreq':S.modal='newreq';S.mreq={type:'عامل إضافي',branch:'olaya',vals:{}};render();break;
    case 'rtype':readReq();S.mreq.type=v;S.mreq.vals={};render();break;
-   case 'approve-req':{const r=S.reqs.find(x=>x.id===v);r.status='done';S.flash['r_'+r.id]=1;render();emit('مهارة اعتمدت طلب دانكن ('+r.type+' · '+r.branchName+') ونفّذته.',['maharah','client'],'اعتمدت الطلب ✓');break}
+   case 'start-req':{const r=S.reqs.find(x=>x.id===v);r.status='work';r.tw=time();(r.msgs=r.msgs||[]).push({from:'m',t:reqNow(r),at:time()});render();emit('مهارة بدأت تنفيذ طلب دانكن ('+r.type+' · '+r.branchName+').',['maharah','client'],'بدأ التنفيذ');break}
+   case 'approve-req':{const r=S.reqs.find(x=>x.id===v);r.status='done';r.td=time();if(!r.tw)r.tw=r.td;(r.msgs=r.msgs||[]).push({from:'m',t:r.type==='شكوى'?'عالجنا الشكوى وأغلقناها. شكرًا لتنبيهك.':'تم اعتماد الطلب وتنفيذه.',at:r.td});S.flash['r_'+r.id]=1;render();emit('مهارة اعتمدت طلب دانكن ('+r.type+' · '+r.branchName+') ونفّذته.',['maharah','client'],'اعتمدت الطلب ✓');break}
    case 'ticket-done':{const t=S.tickets.find(x=>x.id===v);t.done=true;t.sub='رد مدير الحساب ✓';const r=t.src==='worker'?'worker':'client';S.chats[r].push({me:false,t:'مدير الحساب في مهارة رد على سؤالك: تم ✓ وبيتواصل معك بالتفاصيل.'});if(r==='worker')S.wnotes.unshift({kind:'ok',title:'مدير الحساب رد على سؤالك',body:'افتح المساعد الذكي وشوف الرد.',read:false});render();emit('مدير الحساب في مهارة رد على السؤال.',['maharah',r],'انرسل الرد');break}
    case 'rcheck':S.rcheck='ok';render();emit('كريم نجح في التحقق العشوائي داخل فرع الملقا.',['worker','maharah'],'تم التحقق ✓');break;
    case 'endshift':S.shift='done';S.ot=50;S.flash.sal=1;render();emit('كريم أنهى الشفت: 9 ساعات منها ساعة أوفر تايم (+50 ريال).',['worker','client','maharah'],'انتهى شفتك ✓ وانضاف الأوفر تايم');break;
    case 'viol':S.modal='viol';S.vw=v;render();break;
    case 'viol-send':{const id='v'+Date.now();S.viols.unshift({id,worker:S.vw,type:v,t:time(),status:'open'});if(S.vw==='كريم')S.wnotes.unshift({kind:'viol',title:'ملاحظة من مدير الفرع',body:v+'. تقدر تعترض عليها من «طلباتي».',read:false});S.modal=null;render();emit('مدير فرع دانكن سجّل مخالفة على '+S.vw+': '+v+'.',S.vw==='كريم'?['client','maharah','worker']:['client','maharah'],'انسجلت المخالفة ووصلت مهارة');break}
    case 'viol-dispute':{const x=S.viols.find(y=>y.id===v);x.status='disputed';render();emit('كريم اعترض على ملاحظة مدير الفرع.',['worker','maharah','client'],'انرسل اعتراضك');break}
-   case 'send-repl':{S.absent.status='replacement';S.flash.b_nakheel=1;S.flash['w_سالم']=1;S.reqs.unshift({id:'rp'+Date.now(),type:'بديل',branch:'nakheel',branchName:'فرع النخيل',note:'بديل تلقائي لغياب سالم',status:'done',t:time()});render();emit('مهارة شافت غياب سالم وأرسلت بديل لدانكن · فرع النخيل.',['maharah','client'],'انرسل بديل لفرع النخيل');break}
+   case 'send-repl':{S.absent.status='replacement';S.flash.b_nakheel=1;S.flash['w_سالم']=1;S.reqs.unshift({id:'rp'+Date.now(),type:'بديل',branch:'nakheel',branchName:'فرع النخيل',note:'بديل تلقائي لغياب سالم',td:time(),msgs:[{from:'m',t:'لاحظنا غياب سالم وأرسلنا بديل لفرع النخيل بدون ما تطلب.',at:time()}],status:'done',t:time()});render();emit('مهارة شافت غياب سالم وأرسلت بديل لدانكن · فرع النخيل.',['maharah','client'],'انرسل بديل لفرع النخيل');break}
    case 'loadsheet':S.sheet='loaded';render();emit('دانكن رفع شيت حضور نوفمبر، ووصل طابقه: فيه فرق يوم في فرع العليا.',['client','maharah'],'انرفع الشيت وتمت المطابقة');break;
    case 'approvesheet':S.sheet='approved';render();emit('دانكن اعتمد مطابقة الحضور. الفاتورة تطلع على نفس الأرقام.',['client','maharah'],'اعتمدت المطابقة ✓');break;
    case 'gen':S.payroll='generated';render();emit('مهارة ولّدت مسير الرواتب وفاتورة دانكن من نفس سجل الحضور.',['maharah','client','worker'],'تم توليد الرواتب والفاتورة');break;
@@ -1082,11 +1129,16 @@ document.addEventListener('click',e=>{
 document.addEventListener('submit',e=>{
   e.preventDefault();
   if(e.target.id==='askf'){const i=document.getElementById('askin');ask(i.value,e.target.dataset.role);return}
+  if(e.target.classList.contains('rmsg')){
+    const i=e.target.querySelector('input'),t=i.value.trim();if(!t)return;
+    const r=S.reqs.find(x=>x.id===e.target.dataset.rid),side=e.target.dataset.side;
+    (r.msgs=r.msgs||[]).push({from:side,t,at:time()});render();
+    emit(side==='c'?'دانكن كتب لمدير الحساب على طلب '+r.type+' · '+r.branchName+'.':'مدير الحساب رد على دانكن في طلب '+r.type+' · '+r.branchName+'.',['client','maharah'],'انرسلت رسالتك');return}
   if(e.target.id==='reqf'){
     readReq();const m=S.mreq,b=m.branch,n=(m.vals.note||'').trim();
     const br=S.branches.find(x=>x.id===b);const id='r'+Date.now();
     const fields=RF[m.type].filter(f=>f.k!=='note').map(f=>[f.l.replace(/[؟?]/g,''),m.vals[f.k]||f.opts[0]]);
-    S.reqs.unshift({id,type:m.type,branch:b,branchName:br.n,note:n,fields,status:'open',t:time()});
+    S.reqs.unshift({id,type:m.type,branch:b,branchName:br.n,note:n,fields,status:'open',t:time(),msgs:[{from:'m',t:'استلمنا '+(m.type==='شكوى'?'شكواك':'طلبك')+'، وبنرد عليك هنا بأي تحديث.',at:time()}]});
     S.modal=null;S.flash['r_'+id]=1;S.ctab='reqs';render();
     emit('دانكن رفع طلب '+S.mreq.type+' لـ'+br.n+' من البوابة.',['client','maharah'],'انرسل طلبك لمهارة');
   }
