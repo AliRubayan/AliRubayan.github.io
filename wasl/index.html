@@ -321,6 +321,18 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background
 .aiside .chat{flex:1;max-height:none;gap:12px}
 .aiside .msg.bot{background:#F7F3EC;border:0}
 .aiside .msg.me{background:#FFE3D3;color:var(--ink)}
+.rqt tbody tr{cursor:pointer}
+.rqt tbody tr:hover td{background:#FFF6EC}
+.rqt tbody tr.sel td{background:#FFEBDD}
+.rqt tbody tr:focus-visible{outline:3px solid var(--sky);outline-offset:-3px}
+.ell{max-width:240px;overflow:hidden;text-overflow:ellipsis}
+.rside{width:480px;animation-name:slidein}
+.rsbody{flex:1;overflow-y:auto;display:grid;gap:14px;align-content:start;padding-inline-end:2px}
+.props{margin:0;display:grid;gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.props div{display:grid;grid-template-columns:42% 1fr;gap:10px;padding:10px 12px;border-bottom:1px solid #F2EEE8;font-size:14px}
+.props div:last-child{border-bottom:0}
+.props dt{color:var(--ink2)}.props dd{margin:0;font-weight:600}
+.rside .steps2{font-size:11.5px}
 /* ---------- centered chat ---------- */
 .cl{flex:1;display:flex;flex-direction:column;min-height:0;height:calc(100dvh - 120px);max-height:calc(100dvh - 120px)}
 .cl.empty{justify-content:center}
@@ -537,7 +549,7 @@ function fresh(){return {
  log:[], unseen:{worker:0,client:0,maharah:0}, drawer:false, modal:null, flash:{}
 };}
 const KEY='wasl-demo-v2';
-const TRANSIENT=['view','modal','vw','pickB','aiPanel','drawer','flash','pick','other','mreq','wtab','ctab','mtab','loading'];
+const TRANSIENT=['view','modal','vw','pickB','aiPanel','pickR','drawer','flash','pick','other','mreq','wtab','ctab','mtab','loading'];
 function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){const f=fresh();TRANSIENT.forEach(k=>delete j[k]);if(j.shift==='verifying')j.shift='idle';if(!j.perms)j.perms={cam:false,loc:false};if(j.chats)Object.values(j.chats).forEach(a=>{for(let i=a.length-1;i>=0;i--)if(a[i].pending)a.splice(i,1)});return Object.assign(f,j)}}catch(e){}return fresh()}
 function save(){try{const o={};Object.keys(S).forEach(k=>{if(!TRANSIENT.includes(k))o[k]=S[k]});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
 let S=load();
@@ -686,7 +698,7 @@ function client(){
      <div style="margin-top:auto"></div><button class="out" data-act="logout">${I.user}تسجيل خروج</button>
    </aside>
    <section class="content">${{home:cHome,staff:cStaff,reqs:cReqs,recon:cRecon,ai:cAI}[S.ctab]()}</section>
-  </div>${S.aiPanel&&S.ctab!=='ai'?aiPanel():''}`;
+  </div>${S.aiPanel&&S.ctab!=='ai'?aiPanel():S.pickR&&S.ctab==='reqs'?reqPanel():''}`;
 }
 function cHead(t,bare){return `<div class="chead"><h2>${t}</h2><span class="live">مباشر</span><span class="tagdemo">بيانات تجريبية · مثال توضيحي</span>${bare?'</div>':''}`+(bare?'':`<div class="end"><button class="btn pk" data-act="newreq">+ طلب جديد</button><button class="btn or" data-act="aipanel">اسأل مدير الحساب</button></div></div>`)}
 function cKpis(){
@@ -758,16 +770,31 @@ function reqThread(r,side){
     ${ms.map(m=>`<div class="tm ${m.from===side?'mine':''}"><b>${m.from==='m'?'مدير الحساب · مهارة':'دانكن'}</b><span>${esc(m.t)}</span><small class="num">${m.at}</small></div>`).join('')}
     <form class="rmsg inrow" data-rid="${r.id}" data-side="${side}"><input type="text" placeholder="${side==='c'?'اكتب لمدير الحساب…':'رد على العميل…'}" aria-label="رسالة" autocomplete="off"><button class="btn ${side==='c'?'or':'gd'} sm" type="submit">أرسل</button></form></div>`;
 }
+function reqNo(r){return '#'+(1040+S.reqs.length-S.reqs.indexOf(r))}
+function reqBrief(r){const f=r.fields||[];return f.length?f.slice(0,2).map(x=>x[1]).join(' · '):(r.note||'')}
 function cReqs(){
   return `${cHead('الطلبات')}
-   ${S.reqs.length?S.reqs.map(r=>`<div class="panel rq ${S.flash['r_'+r.id]?'new':''}">
-     <div class="rqh"><span class="chip ${r.type==='شكوى'?'bad':r.type==='بديل'?'blue':'gold'}">${r.type}</span><b>${r.type==='عامل إضافي'?'عامل إضافي':r.type==='بديل'?'بديل لعامل':'شكوى'} · ${r.branchName}</b><span class="mut num">${r.t}</span><span style="margin-inline-start:auto">${reqStatus(r)}</span></div>
-     ${reqChips(r)}${r.note?`<p class="rqnote">${esc(r.note)}</p>`:''}
-     ${reqSteps(r)}
-     <div class="rqnow"><b>وش صاير الحين:</b> ${reqNow(r)}</div>
-     ${reqThread(r,'c')}
-   </div>`).join('')
-   :`<div class="panel"><div class="empty">ما رفعت طلبات اليوم.<br><button class="btn pk" style="margin-top:10px" data-act="newreq">ارفع أول طلب</button></div></div>`}`;
+   <div class="panel"><h3>طلباتك<span class="mut">${S.reqs.length} طلب · اضغط أي طلب للتفاصيل</span></h3>
+   ${S.reqs.length?`<div class="tw"><table class="rt rqt"><thead><tr><th>الرقم</th><th>النوع</th><th>الفرع</th><th>التفاصيل</th><th>الحالة</th><th>آخر تحديث</th><th>الوقت</th></tr></thead><tbody>
+   ${S.reqs.map(r=>{const last=(r.msgs||[]).slice(-1)[0];return `<tr class="${S.flash['r_'+r.id]?'hl':''} ${S.pickR===r.id?'sel':''}" data-act="pickr" data-v="${r.id}" tabindex="0" role="button">
+     <td class="num mut">${reqNo(r)}</td><td><span class="chip ${r.type==='شكوى'?'bad':r.type==='بديل'?'blue':'gold'}">${r.type}</span></td><td><b>${r.branchName}</b></td><td class="ell">${esc(reqBrief(r))}</td><td>${reqStatus(r)}</td><td class="ell mut">${last?(last.from==='m'?'مدير الحساب: ':'أنت: ')+esc(last.t):'—'}</td><td class="num mut">${r.t}</td></tr>`}).join('')}
+   </tbody></table></div>`
+   :`<div class="empty">ما رفعت طلبات اليوم.<br><button class="btn pk" style="margin-top:10px" data-act="newreq">ارفع أول طلب</button></div>`}
+   </div>`;
+}
+function reqPanel(){
+  const r=S.reqs.find(x=>x.id===S.pickR);if(!r)return '';
+  return `<div class="aiback" data-act="pickr-x"></div><aside class="aiside dk rside" role="dialog" aria-label="تفاصيل الطلب">
+    <div class="aish"><span class="chip ${r.type==='شكوى'?'bad':r.type==='بديل'?'blue':'gold'}">${r.type}</span><div><b>${r.type==='عامل إضافي'?'عامل إضافي':r.type==='بديل'?'بديل لعامل':'شكوى'} · ${r.branchName}</b><small class="num">${reqNo(r)} · ${r.t}</small></div><button class="back" data-act="pickr-x" aria-label="إغلاق" style="margin-inline-start:auto">✕</button></div>
+    <div class="rsbody">
+      <div class="row between"><span class="thh">الحالة</span>${reqStatus(r)}</div>
+      ${reqSteps(r)}
+      <div class="rqnow"><b>وش صاير الحين:</b> ${reqNow(r)}</div>
+      <div class="thh">تفاصيل الطلب</div>
+      <dl class="props"><div><dt>الفرع</dt><dd>${r.branchName}</dd></div>${(r.fields||[]).map(([l,v])=>`<div><dt>${l}</dt><dd>${esc(v)}</dd></div>`).join('')}${r.note?`<div><dt>ملاحظة</dt><dd>${esc(r.note)}</dd></div>`:''}</dl>
+      ${reqThread(r,'c')}
+    </div>
+  </aside>`;
 }
 function cRecon(){
   const rows=[['فرع الملقا',9,21,21],['فرع العليا',9,7,8],['فرع النخيل',8,8,8],['فرع الياسمين',8,10,10]];
@@ -1013,7 +1040,7 @@ function render(){
   S.flash={};
   if(!fromStorage)save();
 }
-function go(v){S.view=v;S.modal=null;S.aiPanel=false;try{history.pushState(null,'',v==='home'?location.pathname:'#'+v)}catch(e){location.hash=v==='home'?'':v}render();window.scrollTo({top:0})}
+function go(v){S.view=v;S.modal=null;S.aiPanel=false;S.pickR=null;try{history.pushState(null,'',v==='home'?location.pathname:'#'+v)}catch(e){location.hash=v==='home'?'':v}render();window.scrollTo({top:0})}
 
 /* ---------- actions ---------- */
 function startShift(){
@@ -1122,8 +1149,10 @@ document.addEventListener('click',e=>{
    case 'disp-ok':S.ded.status='refunded';S.wnotes.unshift({kind:'ok',title:'انقبل اعتراضك ✓',body:'رجعنا خصم التأخير 45 ريال، وراتبك المتوقع صار '+fmt(expected())+' ريال.',read:false});S.flash.payk=1;render();emit('مهارة قبلت اعتراض كريم ورجع 45 ريال. راتبه المتوقع صار '+fmt(expected())+' ريال.',['maharah','worker'],'قبلت الاعتراض ورجع المبلغ للعامل');break;
    case 'disp-no':S.ded.status='rejected';S.wnotes.unshift({kind:'no',title:'تمت مراجعة اعتراضك',body:'الخصم باقي حسب سجل الحضور. تقدر تتواصل مع مدير حسابك.',read:false});render();emit('مهارة راجعت اعتراض كريم وأبقت الخصم.',['maharah','worker'],'رفضت الاعتراض');break;
    case 'ctab':S.ctab=v;S.pickB=null;S.aiPanel=false;render();break;
-   case 'aipanel':S.aiPanel=true;render();{const i=document.getElementById('askin');if(i)i.focus()}break;
+   case 'aipanel':S.aiPanel=true;S.pickR=null;render();{const i=document.getElementById('askin');if(i)i.focus()}break;
    case 'aipanel-x':S.aiPanel=false;render();break;
+   case 'pickr':S.pickR=v;render();break;
+   case 'pickr-x':S.pickR=null;render();break;
    case 'pickb':S.pickB=(v&&S.pickB!==v)?v:null;render();break;
    case 'newreq-b':S.modal='newreq';S.mreq={type:'بديل',branch:v,vals:{}};render();break;
    case 'mtab':S.mtab=v;render();break;
@@ -1153,18 +1182,19 @@ document.addEventListener('submit',e=>{
   if(e.target.classList.contains('rmsg')){
     const i=e.target.querySelector('input'),t=i.value.trim();if(!t)return;
     const r=S.reqs.find(x=>x.id===e.target.dataset.rid),side=e.target.dataset.side;
-    (r.msgs=r.msgs||[]).push({from:side,t,at:time()});render();
+    (r.msgs=r.msgs||[]).push({from:side,t,at:time()});render();{const sb=document.querySelector('.rsbody');if(sb){sb.scrollTop=sb.scrollHeight;const ni=sb.querySelector('.rmsg input');if(ni)ni.focus()}}
     emit(side==='c'?'دانكن كتب لمدير الحساب على طلب '+r.type+' · '+r.branchName+'.':'مدير الحساب رد على دانكن في طلب '+r.type+' · '+r.branchName+'.',['client','maharah'],'انرسلت رسالتك');return}
   if(e.target.id==='reqf'){
     readReq();const m=S.mreq,b=m.branch,n=(m.vals.note||'').trim();
     const br=S.branches.find(x=>x.id===b);const id='r'+Date.now();
     const fields=RF[m.type].filter(f=>f.k!=='note').map(f=>[f.l.replace(/[؟?]/g,''),m.vals[f.k]||f.opts[0]]);
     S.reqs.unshift({id,type:m.type,branch:b,branchName:br.n,note:n,fields,status:'open',t:time(),msgs:[{from:'m',t:'استلمنا '+(m.type==='شكوى'?'شكواك':'طلبك')+'، وبنرد عليك هنا بأي تحديث.',at:time()}]});
-    S.modal=null;S.flash['r_'+id]=1;S.ctab='reqs';render();
+    S.modal=null;S.flash['r_'+id]=1;S.ctab='reqs';S.pickR=id;render();
     emit('دانكن رفع طلب '+S.mreq.type+' لـ'+br.n+' من البوابة.',['client','maharah'],'انرسل طلبك لمهارة');
   }
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.modal||S.drawer||S.aiPanel)){S.modal=null;S.drawer=false;S.aiPanel=false;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.modal||S.drawer||S.aiPanel||S.pickR)){S.modal=null;S.drawer=false;S.aiPanel=false;S.pickR=null;render()}
+  else if(e.key==='Enter'&&e.target.matches&&e.target.matches('tr[data-act=pickr]')){S.pickR=e.target.dataset.v;render()}});
 function fromHash(){const h=(location.hash||'').slice(1);S.view=['worker','client','maharah'].includes(h)?h:'home';S.modal=null;render()}
 window.addEventListener('hashchange',fromHash);window.addEventListener('popstate',fromHash);
 window.addEventListener('storage',e=>{if(e.key!==KEY)return;const keep={};TRANSIENT.forEach(k=>keep[k]=S[k]);if(Object.values(S.chats).some(a=>a.some(m=>m.pending)))return;S=Object.assign(load(),keep);S.flash={};fromStorage=true;try{render()}finally{fromStorage=false}});
