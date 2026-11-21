@@ -264,6 +264,13 @@ label.f{display:grid;gap:6px;font-size:13px;color:var(--ink2)}
 @keyframes flow{to{background-position:-14px 0}}
 code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#F4EFE7;padding:2px 6px;border-radius:6px;direction:ltr;display:inline-block}
 
+.mbox.wide{width:min(560px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow-y:auto}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.fgrid{grid-template-columns:1fr}}
+.rchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.rchips i{font-style:normal;font-size:12px;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:3px 8px;color:var(--ink2)}
+.rchips b{color:var(--ink);font-size:12px}
+.item>div:nth-child(2){min-width:0;flex:1}
 /* ---------- centered chat ---------- */
 .cl{flex:1;display:flex;flex-direction:column;min-height:0;height:calc(100dvh - 120px);max-height:calc(100dvh - 120px)}
 .cl.empty{justify-content:center}
@@ -480,7 +487,7 @@ function fresh(){return {
  log:[], unseen:{worker:0,client:0,maharah:0}, drawer:false, modal:null, flash:{}
 };}
 const KEY='wasl-demo-v2';
-const TRANSIENT=['view','modal','drawer','flash','pick','other','mreq','wtab','ctab','mtab','loading'];
+const TRANSIENT=['view','modal','vw','drawer','flash','pick','other','mreq','wtab','ctab','mtab','loading'];
 function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){const f=fresh();TRANSIENT.forEach(k=>delete j[k]);if(j.shift==='verifying')j.shift='idle';if(!j.perms)j.perms={cam:false,loc:false};if(j.chats)Object.values(j.chats).forEach(a=>{for(let i=a.length-1;i>=0;i--)if(a[i].pending)a.splice(i,1)});return Object.assign(f,j)}}catch(e){}return fresh()}
 function save(){try{const o={};Object.keys(S).forEach(k=>{if(!TRANSIENT.includes(k))o[k]=S[k]});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
 let S=load();
@@ -674,7 +681,7 @@ function reqStatus(r){return r.status==='done'?'<span class="chip good">معتم
 function cReqs(){
   return `${cHead('الطلبات')}
   <div class="panel"><h3>طلباتك<span class="mut">بدل الإيميلات</span></h3>
-   ${S.reqs.length?S.reqs.map(r=>`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':r.type==='بديل'?'blue':'gold'}">${r.type}</span><div><b>${r.type==='عامل إضافي'?'عامل إضافي':r.type==='بديل'?'بديل لعامل':'شكوى'} · ${r.branchName}</b><span class="mut">${esc(r.note||'بدون ملاحظة')} · ${r.t}</span></div><div class="acts">${reqStatus(r)}</div></div>`).join('')
+   ${S.reqs.length?S.reqs.map(r=>`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':r.type==='بديل'?'blue':'gold'}">${r.type}</span><div><b>${r.type==='عامل إضافي'?'عامل إضافي':r.type==='بديل'?'بديل لعامل':'شكوى'} · ${r.branchName}</b><span class="mut">${r.note?esc(r.note)+' · ':''}${r.t}</span>${reqChips(r)}</div><div class="acts">${reqStatus(r)}</div></div>`).join('')
    :`<div class="empty">ما رفعت طلبات اليوم.<br><button class="btn pk" style="margin-top:10px" data-act="newreq">ارفع أول طلب</button></div>`}
   </div>`;
 }
@@ -759,7 +766,7 @@ function mHome(){
   const here=MAH_OTHER_HERE+presentDunkin(), need=MAH_OTHER_NEED+needDunkin();
   const kareemLate=S.shift==='idle'||S.shift==='verifying';
   const items=[];
-  S.reqs.forEach(r=>items.push(`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':'gold'}">${r.type==='شكوى'?'شكوى':'طلب'}</span><div><b>${r.type} · دانكن · ${r.branchName}</b><span class="mut">من بوابة العميل · ${r.t}${r.note?' · '+esc(r.note):''}</span></div><div class="acts">${r.status==='done'?'<span class="chip good">تم ✓</span>':`<button class="btn gd sm" data-act="approve-req" data-v="${r.id}">اعتمد ونفّذ</button>`}</div></div>`));
+  S.reqs.forEach(r=>items.push(`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':'gold'}">${r.type==='شكوى'?'شكوى':'طلب'}</span><div><b>${r.type} · دانكن · ${r.branchName}</b><span class="mut">من بوابة العميل · ${r.t}${r.note?' · '+esc(r.note):''}</span>${reqChips(r)}</div><div class="acts">${r.status==='done'?'<span class="chip good">تم ✓</span>':`<button class="btn gd sm" data-act="approve-req" data-v="${r.id}">اعتمد ونفّذ</button>`}</div></div>`));
   if(S.ded.status!=='active') items.push(`<div class="item ${S.flash.disp?'new':''}"><span class="chip warn">اعتراض</span><div><b>كريم · خصم تأخير #${S.ded.id} · ${S.ded.amt} ريال</b><span class="mut">من تطبيق العامل · السبب: ${esc(S.ded.reason)}</span></div><div class="acts">${S.ded.status==='disputed'?`<button class="btn gn sm" data-act="disp-ok">قبول</button><button class="btn ol sm" data-act="disp-no">رفض</button>`:S.ded.status==='refunded'?'<span class="chip good">انقبل · رجع المبلغ</span>':'<span class="chip bad">انرفض</span>'}</div></div>`);
   if(S.sheet!=='none') items.push(`<div class="item"><span class="chip warn">فرق</span><div><b>فرق بين شيت دانكن وسجلنا · فرع العليا · يوم واحد</b><span class="mut">تذكرة واحدة يشوفها الكل، والعامل يقدر يعترض فيها</span></div><div class="acts">${S.sheet==='approved'?'<span class="chip good">العميل اعتمد ✓</span>':'<span class="chip grey">بانتظار العميل</span>'}</div></div>`);
   S.viols.forEach(v=>items.push(`<div class="item"><span class="chip bad">مخالفة</span><div><b>${v.worker} · ${esc(v.type)}</b><span class="mut">من مدير فرع دانكن · ${v.t}${v.status==='disputed'?' · العامل اعترض':''}</span></div><div class="acts">${v.status==='disputed'?'<span class="chip warn">اعتراض</span>':'<span class="chip grey">مسجلة</span>'}</div></div>`));
@@ -843,16 +850,46 @@ function modalHtml(){
      ${ts.map(t=>`<button class="opt" data-act="viol-send" data-v="${t}">${t}</button>`).join('')}<button class="btn ol" data-act="close">إلغاء</button></div></div>`;
   }
   if(S.modal!=='newreq')return '';
-  const m=S.mreq;
-  return `<div class="modal" data-act="close-bg"><form class="mbox" id="reqf" role="dialog" aria-label="طلب جديد">
+  const m=S.mreq, F=RF[m.type];
+  const fld=f=>{const v=m.vals[f.k]??'';
+    if(f.opts)return `<label class="f">${f.l}<select data-rf="${f.k}">${f.opts.map(o=>`<option ${v===o?'selected':''}>${o}</option>`).join('')}</select></label>`;
+    if(f.area)return `<label class="f" style="grid-column:1/-1">${f.l}<textarea data-rf="${f.k}" rows="3" maxlength="300" placeholder="${f.ph||''}" ${f.req?'required':''}>${esc(v)}</textarea></label>`;
+    return `<label class="f" ${f.wide?'style="grid-column:1/-1"':''}>${f.l}<input type="text" data-rf="${f.k}" value="${esc(v)}" placeholder="${f.ph||''}" ${f.req?'required':''}></label>`};
+  return `<div class="modal" data-act="close-bg"><form class="mbox wide" id="reqf" role="dialog" aria-label="طلب جديد">
    <h3>طلب جديد</h3>
    <div class="seg">${['عامل إضافي','بديل','شكوى'].map(t=>`<button type="button" data-act="rtype" data-v="${t}" aria-pressed="${m.type===t}">${t}</button>`).join('')}</div>
-   <label class="f">الفرع<select id="rbranch">${S.branches.map(b=>`<option value="${b.id}" ${m.branch===b.id?'selected':''}>${b.n}</option>`).join('')}</select></label>
-   <label class="f">ملاحظة<input type="text" id="rnote" value="${esc(m.note)}" placeholder="${m.type==='شكوى'?'وش المشكلة؟':'مثلًا: الخميس 4 م إلى 12 ص · كاشير'}"></label>
-   <button class="btn pk" type="submit">إرسال الطلب لمهارة</button>
+   <div class="fgrid">
+     <label class="f">الفرع<select id="rbranch">${S.branches.map(b=>`<option value="${b.id}" ${m.branch===b.id?'selected':''}>${b.n}</option>`).join('')}</select></label>
+     ${F.map(fld).join('')}
+   </div>
+   <button class="btn pk" type="submit">إرسال ${m.type==='شكوى'?'الشكوى':'الطلب'} لمهارة</button>
    <button class="btn ol" type="button" data-act="close">إلغاء</button>
   </form></div>`;
 }
+const WORKERS=['كريم · كاشير','ماريا · باريستا','سالم · كاشير','جوان · باريستا','بلال · تحضير','عمران · كاشير'];
+const RF={
+ 'عامل إضافي':[
+  {k:'role',l:'الوظيفة المطلوبة',opts:['كاشير','باريستا','تحضير','تنظيف']},
+  {k:'count',l:'كم عامل؟',opts:['1','2','3','4','5']},
+  {k:'shift',l:'الشفت',opts:['صباحي 8 ص إلى 4 م','مسائي 4 م إلى 12 ص','ليلي 12 ص إلى 8 ص']},
+  {k:'start',l:'يبدأ متى؟',opts:['اليوم','بكرة','بداية الأسبوع الجاي','بداية الشهر الجاي']},
+  {k:'dur',l:'المدة',opts:['يوم واحد','أسبوع','شهر','دائم']},
+  {k:'note',l:'ملاحظة (اختياري)',ph:'مثلًا: يفضّل خبرة سابقة',wide:1}],
+ 'بديل':[
+  {k:'who',l:'العامل المطلوب استبداله',opts:WORKERS},
+  {k:'why',l:'السبب',opts:['غياب اليوم','إجازة','مرض','أداء ضعيف','ترك العمل']},
+  {k:'start',l:'البديل يبدأ متى؟',opts:['الحين (عاجل)','بكرة','بداية الأسبوع الجاي']},
+  {k:'dur',l:'نوع الاستبدال',opts:['مؤقت لين يرجع','دائم']},
+  {k:'note',l:'ملاحظة (اختياري)',ph:'أي تفاصيل تساعد مهارة',wide:1}],
+ 'شكوى':[
+  {k:'topic',l:'نوع الشكوى',opts:['سلوك عامل','تأخر متكرر','جودة العمل','الفاتورة','تأخر رد مهارة']},
+  {k:'who',l:'العامل المعني',opts:['ما تخص عامل محدد',...WORKERS]},
+  {k:'when',l:'متى صارت؟',opts:['اليوم','أمس','هالأسبوع','متكررة']},
+  {k:'pri',l:'الأولوية',opts:['عادية','عاجلة']},
+  {k:'note',l:'التفاصيل',area:1,req:1,ph:'اشرح اللي صار باختصار'}]
+};
+function readReq(){const m=S.mreq;const b=document.getElementById('rbranch');if(b)m.branch=b.value;document.querySelectorAll('[data-rf]').forEach(e=>{m.vals[e.dataset.rf]=e.value})}
+function reqChips(r){return r.fields&&r.fields.length?`<span class="rchips">${r.fields.map(([l,v])=>`<i>${l}: <b>${esc(v)}</b></i>`).join('')}</span>`:''}
 
 /* ---------- render ---------- */
 const HINTS={
@@ -993,8 +1030,8 @@ document.addEventListener('click',e=>{
    case 'disp-no':S.ded.status='rejected';S.wnotes.unshift({kind:'no',title:'تمت مراجعة اعتراضك',body:'الخصم باقي حسب سجل الحضور. تقدر تتواصل مع مدير حسابك.',read:false});render();emit('مهارة راجعت اعتراض كريم وأبقت الخصم.',['maharah','worker'],'رفضت الاعتراض');break;
    case 'ctab':S.ctab=v;render();break;
    case 'mtab':S.mtab=v;render();break;
-   case 'newreq':S.modal='newreq';S.mreq={type:'عامل إضافي',branch:'olaya',note:''};render();break;
-   case 'rtype':S.mreq.type=v;S.mreq.branch=document.getElementById('rbranch').value;S.mreq.note=document.getElementById('rnote').value;render();break;
+   case 'newreq':S.modal='newreq';S.mreq={type:'عامل إضافي',branch:'olaya',vals:{}};render();break;
+   case 'rtype':readReq();S.mreq.type=v;S.mreq.vals={};render();break;
    case 'approve-req':{const r=S.reqs.find(x=>x.id===v);r.status='done';S.flash['r_'+r.id]=1;render();emit('مهارة اعتمدت طلب دانكن ('+r.type+' · '+r.branchName+') ونفّذته.',['maharah','client'],'اعتمدت الطلب ✓');break}
    case 'ticket-done':{const t=S.tickets.find(x=>x.id===v);t.done=true;t.sub='رد مدير الحساب ✓';const r=t.src==='worker'?'worker':'client';S.chats[r].push({me:false,t:'مدير الحساب في مهارة رد على سؤالك: تم ✓ وبيتواصل معك بالتفاصيل.'});if(r==='worker')S.wnotes.unshift({kind:'ok',title:'مدير الحساب رد على سؤالك',body:'افتح المساعد الذكي وشوف الرد.',read:false});render();emit('مدير الحساب في مهارة رد على السؤال.',['maharah',r],'انرسل الرد');break}
    case 'rcheck':S.rcheck='ok';render();emit('كريم نجح في التحقق العشوائي داخل فرع الملقا.',['worker','maharah'],'تم التحقق ✓');break;
@@ -1016,9 +1053,10 @@ document.addEventListener('submit',e=>{
   e.preventDefault();
   if(e.target.id==='askf'){const i=document.getElementById('askin');ask(i.value,e.target.dataset.role);return}
   if(e.target.id==='reqf'){
-    const b=document.getElementById('rbranch').value,n=document.getElementById('rnote').value.trim();
+    readReq();const m=S.mreq,b=m.branch,n=(m.vals.note||'').trim();
     const br=S.branches.find(x=>x.id===b);const id='r'+Date.now();
-    S.reqs.unshift({id,type:S.mreq.type,branch:b,branchName:br.n,note:n,status:'open',t:time()});
+    const fields=RF[m.type].filter(f=>f.k!=='note').map(f=>[f.l.replace(/[؟?]/g,''),m.vals[f.k]||f.opts[0]]);
+    S.reqs.unshift({id,type:m.type,branch:b,branchName:br.n,note:n,fields,status:'open',t:time()});
     S.modal=null;S.flash['r_'+id]=1;S.ctab='reqs';render();
     emit('دانكن رفع طلب '+S.mreq.type+' لـ'+br.n+' من البوابة.',['client','maharah'],'انرسل طلبك لمهارة');
   }
