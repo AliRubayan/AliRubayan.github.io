@@ -288,7 +288,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background
 .ev{border-top:1px solid var(--line-d);padding:12px 0;font-size:14px;line-height:1.6}
 .ev small{display:block;color:var(--muted-d);font-size:12px}
 .ev .who{font-size:11px;padding:2px 8px;border-radius:999px;background:#FFFFFF14;color:var(--ice);margin-inline-end:6px}
-.toasts{position:fixed;z-index:60;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:grid;gap:8px;width:min(460px,calc(100% - 32px))}
+.toasts{pointer-events:none;position:fixed;z-index:60;bottom:calc(90px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:grid;gap:8px;width:min(460px,calc(100% - 32px))}
 .toast{background:#0A1330;color:#fff;border:1px solid #2B3B78;border-radius:14px;padding:12px 14px;font-size:14px;box-shadow:0 14px 40px #0008;animation:up .25s ease;line-height:1.6}
 .toast b{color:#9CC4FF}
 
@@ -801,10 +801,11 @@ function paintChat(){const c=document.getElementById('chat');if(!c)return;const 
 async function ask(q,role){
   q=(q||'').trim();if(!q)return;
   const chat=S.chats[role];
-  if(chat.some(m=>m.pending))return;
+  if(chat.some(m=>m.pending&&Date.now()-(m.at||0)<25000))return;
+  for(let i=chat.length-1;i>=0;i--)if(chat[i].pending)chat.splice(i,1);
   const hist=chat.filter(m=>!m.pending).slice(-6);
   chat.push({me:true,t:q});
-  const bot={me:false,t:'يكتب…',pending:true};chat.push(bot);render();
+  const bot={me:false,t:'يكتب…',pending:true,at:Date.now()};chat.push(bot);render();
   let done=false;
   const sm=aiOff?null:await getSample();
   if(sm){
