@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>[hidden]{display:none!important}</style>
 <title>وصل</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Cairo:wght@700;800;900&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Cairo:wght@700;800;900&display=swap" media="print" onload="this.media=&quot;all&quot;">
 <style>
 /* Layout: navy Wasl shell (switcher + shared log) framing three product views, each in its own brand: My Maharah gold phone, Dunkin-style client portal, Maharah console. Single deliberate light look inside a dark shell. */
 :root{
@@ -530,6 +530,7 @@ function wMe(){
      <div class="row between"><span class="mut">اللغة</span><b>العربية</b></div>
    </div>
    <button class="pc" data-act="logout" style="color:var(--bad);font-weight:700;text-align:center">تسجيل خروج</button>
+   <button data-act="reset-here" class="mut" style="justify-self:end;padding:6px 10px;border:1px solid var(--rule);border-radius:999px;background:#fff">↺ إعادة ضبط</button>
   </div></div>`;
 }
 function wReqs(){
@@ -799,6 +800,7 @@ function landing(){
    <div class="foot"><span>بيانات تجريبية · دانكن مثال توضيحي · الربط مع قوى وزاتكا محاكاة</span><button id="installBtn" hidden>ثبّت التطبيق</button>${S.log.length?'<button data-act="reset">ابدأ من جديد</button>':''}</div>
   </div>`;
 }
+let fromStorage=false;
 function render(){
   if(S.loading){app.innerHTML=`<div class="loading"><div><div class="spin"></div>جارٍ تسجيل الدخول…</div></div>`;document.getElementById('modal').innerHTML='';return}
   app.innerHTML=S.view==='home'?landing():{worker,client,maharah}[S.view]();
@@ -806,7 +808,7 @@ function render(){
   document.getElementById('modal').innerHTML=modalHtml();
   const c=document.getElementById('chat');if(c)c.scrollTop=c.scrollHeight;
   S.flash={};
-  save();
+  if(!fromStorage)save();
 }
 function go(v){S.view=v;S.modal=null;try{history.pushState(null,'',v==='home'?location.pathname:'#'+v)}catch(e){location.hash=v==='home'?'':v}render();window.scrollTo({top:0})}
 
@@ -902,6 +904,7 @@ document.addEventListener('click',e=>{
   if(a==='close-bg'&&e.target!==el)return;
   switch(a){
    case 'reset':S=fresh();save();go('home');break;
+   case 'reset-here':{const v0=S.view;S=fresh();S.view=v0;S.wtab='home';save();render();toast('رجع كل شي لبداية اليوم');break}
    case 'enter':S.loading=true;render();setTimeout(()=>{S.loading=false;S.wtab='home';S.ctab='home';S.mtab='home';go(v)},650);break;
    case 'logout':go('home');break;
    case 'soon':toast('هذي الخدمة غير متاحة في النسخة التجريبية.');break;
@@ -950,7 +953,7 @@ document.addEventListener('submit',e=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.modal||S.drawer)){S.modal=null;S.drawer=false;render()}});
 function fromHash(){const h=(location.hash||'').slice(1);S.view=['worker','client','maharah'].includes(h)?h:'home';S.modal=null;render()}
 window.addEventListener('hashchange',fromHash);window.addEventListener('popstate',fromHash);
-window.addEventListener('storage',e=>{if(e.key!==KEY)return;const keep={};TRANSIENT.forEach(k=>keep[k]=S[k]);S=Object.assign(load(),keep);S.flash={};render()});
+window.addEventListener('storage',e=>{if(e.key!==KEY)return;const keep={};TRANSIENT.forEach(k=>keep[k]=S[k]);if(Object.values(S.chats).some(a=>a.some(m=>m.pending)))return;S=Object.assign(load(),keep);S.flash={};fromStorage=true;try{render()}finally{fromStorage=false}});
 fromHash();
 })();
 </script>

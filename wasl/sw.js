@@ -1,5 +1,5 @@
-/* Wasl demo service worker: network first, cached copy when offline. */
-const CACHE = "wasl-v7"
+/* Wasl demo service worker: serve the cached copy at once, refresh it in the background. */
+const CACHE = "wasl-v8"
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"]
 self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES))) })
 self.addEventListener("activate", (e) => e.waitUntil(
@@ -7,10 +7,15 @@ self.addEventListener("activate", (e) => e.waitUntil(
 ))
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return
-  e.respondWith(
-    fetch(e.request).then((r) => {
-      if (r.ok && new URL(e.request.url).origin === location.origin) { const copy = r.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)) }
-      return r
-    }).catch(() => caches.match(e.request).then((m) => m || caches.match("./index.html")))
-  )
+  const url = new URL(e.request.url)
+  const own = url.origin === location.origin
+  const font = url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com"
+  if (!own && !font) return
+  e.respondWith(caches.open(CACHE).then(async (c) => {
+    const key = own && e.request.mode === "navigate" ? "./index.html" : e.request
+    const hit = await c.match(key, { ignoreSearch: own })
+    const fresh = fetch(e.request).then((r) => { if (r.ok || r.type === "opaque") c.put(key, r.clone()); return r }).catch(() => null)
+    if (hit) { e.waitUntil(fresh); return hit }
+    return (await fresh) || Response.error()
+  }))
 })
