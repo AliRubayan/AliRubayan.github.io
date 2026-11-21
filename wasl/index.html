@@ -311,6 +311,16 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background
 .tm.mine{justify-self:end;background:#FFE3D3;border-start-start-radius:14px;border-start-end-radius:4px}
 .mh .tm.mine{background:var(--goldbg)}
 .rmsg input{padding:8px 12px}
+.aiback{position:fixed;inset:0;z-index:44;background:#1f1a1433}
+.aiside{position:fixed;top:0;bottom:0;left:0;z-index:45;width:400px;max-width:100%;background:#fff;box-shadow:20px 0 60px #0003;display:flex;flex-direction:column;gap:12px;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));animation:slidein .22s ease}
+@keyframes slidein{from{transform:translateX(-40px);opacity:.6}}
+.aish{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
+.aish b{font-family:var(--display);font-size:17px;display:block}
+.aish small{font-size:12px;color:var(--ink2)}
+.aish .back{background:#F4EFE8}
+.aiside .chat{flex:1;max-height:none;gap:12px}
+.aiside .msg.bot{background:#F7F3EC;border:0}
+.aiside .msg.me{background:#FFE3D3;color:var(--ink)}
 /* ---------- centered chat ---------- */
 .cl{flex:1;display:flex;flex-direction:column;min-height:0;height:calc(100dvh - 120px);max-height:calc(100dvh - 120px)}
 .cl.empty{justify-content:center}
@@ -527,7 +537,7 @@ function fresh(){return {
  log:[], unseen:{worker:0,client:0,maharah:0}, drawer:false, modal:null, flash:{}
 };}
 const KEY='wasl-demo-v2';
-const TRANSIENT=['view','modal','vw','pickB','drawer','flash','pick','other','mreq','wtab','ctab','mtab','loading'];
+const TRANSIENT=['view','modal','vw','pickB','aiPanel','drawer','flash','pick','other','mreq','wtab','ctab','mtab','loading'];
 function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j){const f=fresh();TRANSIENT.forEach(k=>delete j[k]);if(j.shift==='verifying')j.shift='idle';if(!j.perms)j.perms={cam:false,loc:false};if(j.chats)Object.values(j.chats).forEach(a=>{for(let i=a.length-1;i>=0;i--)if(a[i].pending)a.splice(i,1)});return Object.assign(f,j)}}catch(e){}return fresh()}
 function save(){try{const o={};Object.keys(S).forEach(k=>{if(!TRANSIENT.includes(k))o[k]=S[k]});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
 let S=load();
@@ -676,9 +686,9 @@ function client(){
      <div style="margin-top:auto"></div><button class="out" data-act="logout">${I.user}تسجيل خروج</button>
    </aside>
    <section class="content">${{home:cHome,staff:cStaff,reqs:cReqs,recon:cRecon,ai:cAI}[S.ctab]()}</section>
-  </div>`;
+  </div>${S.aiPanel&&S.ctab!=='ai'?aiPanel():''}`;
 }
-function cHead(t,bare){return `<div class="chead"><h2>${t}</h2><span class="live">مباشر</span><span class="tagdemo">بيانات تجريبية · مثال توضيحي</span>${bare?'</div>':''}`+(bare?'':`<div class="end"><button class="btn pk" data-act="newreq">+ طلب جديد</button><button class="btn or" data-act="ctab" data-v="ai">اسأل مدير الحساب</button></div></div>`)}
+function cHead(t,bare){return `<div class="chead"><h2>${t}</h2><span class="live">مباشر</span><span class="tagdemo">بيانات تجريبية · مثال توضيحي</span>${bare?'</div>':''}`+(bare?'':`<div class="end"><button class="btn pk" data-act="newreq">+ طلب جديد</button><button class="btn or" data-act="aipanel">اسأل مدير الحساب</button></div></div>`)}
 function cKpis(){
   const open=S.reqs.filter(r=>r.status!=='done').length;
   return `<div class="kpis">
@@ -796,6 +806,15 @@ function cRecon(){
 }
 function cAI(){
   return `${cHead('مدير الحساب الذكي',true)}${claudeChat('client')}`;
+}
+function aiPanel(){
+  const role='client';
+  return `<div class="aiback" data-act="aipanel-x"></div><aside class="aiside dk" role="dialog" aria-label="مدير الحساب الذكي">
+    <div class="aish"><div class="spark" style="width:38px;height:38px;border-radius:12px;margin:0">${I.chat}</div><div><b>مدير الحساب الذكي</b><small>يجاوب من سجلك نفسه</small></div><button class="back" data-act="aipanel-x" aria-label="إغلاق" style="margin-inline-start:auto">✕</button></div>
+    <div class="chat" id="chat">${S.chats[role].map(m=>`<div class="msg ${m.me?'me':'bot'} ${m.pending?'typing':''}">${m.me?esc(m.t):m.html?m.t:esc(m.t)}</div>`).join('')}</div>
+    <div class="qs">${QS[role].map(q=>`<button data-act="ask" data-v="${q}" data-role="${role}">${q}</button>`).join('')}</div>
+    <form class="composer" id="askf" data-role="${role}"><input type="text" id="askin" placeholder="اسأل عن الحضور، الطلبات، الفاتورة…" aria-label="سؤالك" autocomplete="off"><button type="submit" aria-label="أرسل">↑</button></form>
+  </aside>`;
 }
 function claudeChat(role){
   const msgs=S.chats[role], fresh1=msgs.length<=1;
@@ -994,7 +1013,7 @@ function render(){
   S.flash={};
   if(!fromStorage)save();
 }
-function go(v){S.view=v;S.modal=null;try{history.pushState(null,'',v==='home'?location.pathname:'#'+v)}catch(e){location.hash=v==='home'?'':v}render();window.scrollTo({top:0})}
+function go(v){S.view=v;S.modal=null;S.aiPanel=false;try{history.pushState(null,'',v==='home'?location.pathname:'#'+v)}catch(e){location.hash=v==='home'?'':v}render();window.scrollTo({top:0})}
 
 /* ---------- actions ---------- */
 function startShift(){
@@ -1102,7 +1121,9 @@ document.addEventListener('click',e=>{
    case 'send-dispute':{if(S.pick==='__other'){const t=(document.getElementById('otherReason')?.value||'').trim();if(!t){toast('اكتب سبب الاعتراض أول');const x=document.getElementById('otherReason');if(x)x.focus();break}S.pick=t}}S.ded.status='disputed';S.ded.reason=S.pick;S.modal=null;S.flash.disp=1;render();emit('كريم اعترض على خصم التأخير #4613 (45 ريال) من التطبيق.',['worker','maharah'],'انرسل اعتراضك لمهارة');break;
    case 'disp-ok':S.ded.status='refunded';S.wnotes.unshift({kind:'ok',title:'انقبل اعتراضك ✓',body:'رجعنا خصم التأخير 45 ريال، وراتبك المتوقع صار '+fmt(expected())+' ريال.',read:false});S.flash.payk=1;render();emit('مهارة قبلت اعتراض كريم ورجع 45 ريال. راتبه المتوقع صار '+fmt(expected())+' ريال.',['maharah','worker'],'قبلت الاعتراض ورجع المبلغ للعامل');break;
    case 'disp-no':S.ded.status='rejected';S.wnotes.unshift({kind:'no',title:'تمت مراجعة اعتراضك',body:'الخصم باقي حسب سجل الحضور. تقدر تتواصل مع مدير حسابك.',read:false});render();emit('مهارة راجعت اعتراض كريم وأبقت الخصم.',['maharah','worker'],'رفضت الاعتراض');break;
-   case 'ctab':S.ctab=v;S.pickB=null;render();break;
+   case 'ctab':S.ctab=v;S.pickB=null;S.aiPanel=false;render();break;
+   case 'aipanel':S.aiPanel=true;render();{const i=document.getElementById('askin');if(i)i.focus()}break;
+   case 'aipanel-x':S.aiPanel=false;render();break;
    case 'pickb':S.pickB=(v&&S.pickB!==v)?v:null;render();break;
    case 'newreq-b':S.modal='newreq';S.mreq={type:'بديل',branch:v,vals:{}};render();break;
    case 'mtab':S.mtab=v;render();break;
@@ -1143,7 +1164,7 @@ document.addEventListener('submit',e=>{
     emit('دانكن رفع طلب '+S.mreq.type+' لـ'+br.n+' من البوابة.',['client','maharah'],'انرسل طلبك لمهارة');
   }
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.modal||S.drawer)){S.modal=null;S.drawer=false;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.modal||S.drawer||S.aiPanel)){S.modal=null;S.drawer=false;S.aiPanel=false;render()}});
 function fromHash(){const h=(location.hash||'').slice(1);S.view=['worker','client','maharah'].includes(h)?h:'home';S.modal=null;render()}
 window.addEventListener('hashchange',fromHash);window.addEventListener('popstate',fromHash);
 window.addEventListener('storage',e=>{if(e.key!==KEY)return;const keep={};TRANSIENT.forEach(k=>keep[k]=S[k]);if(Object.values(S.chats).some(a=>a.some(m=>m.pending)))return;S=Object.assign(load(),keep);S.flash={};fromStorage=true;try{render()}finally{fromStorage=false}});
