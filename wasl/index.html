@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A1330">
+<meta name="description" content="وصل: سجل واحد والكل يشوفه. نموذج تفاعلي لمهاراثون ببيانات تجريبية.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="وصل">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>html,body{margin:0}[hidden]{display:none!important}</style>
+<title>وصل · جرّب النظام</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Cairo:wght@700;800;900&display=swap">
+<style>
+/* Layout: navy Wasl shell (switcher + shared log) framing three product views, each in its own brand: My Maharah gold phone, Dunkin-style client portal, Maharah console. Single deliberate light look inside a dark shell. */
+:root{
+  color-scheme:light;
+  --night:#050A1F;--navy:#0A1330;--line-d:#1D2B63;--blue:#1633FF;--sky:#4C8DFF;--ice:#C9DBFF;--muted-d:#9FAACB;
+  --paper:#F6F3EE;--card:#FFFFFF;--ink:#1F1A14;--ink2:#6B6157;--rule:#ECE6DD;
+  --gold:#B08A4E;--gold2:#8E6C38;--goldbg:#F3EBDD;
+  --dk-or:#FF671F;--dk-pk:#DA1884;--dk-br:#5A2D0C;--dk-bg:#FFF6F0;
+  --good:#1E9E5A;--goodbg:#E6F6EC;--bad:#D23B3B;--badbg:#FDEBEB;--warn:#C27A0E;--warnbg:#FFF3DC;
+  --display:'Cairo','IBM Plex Sans Arabic',Tahoma,sans-serif;--body:'IBM Plex Sans Arabic',Tahoma,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{background:var(--night)}
+body{font-family:var(--body);color:var(--ink);min-height:100vh;direction:rtl;
+  background:radial-gradient(900px 600px at 100% 0%,#13248A55,transparent 60%),linear-gradient(180deg,var(--navy),var(--night)) fixed}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ---------- shell ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:#0A1330F2;backdrop-filter:blur(10px);border-bottom:1px solid var(--line-d)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:31;background:var(--navy)}
+.top-in{display:flex;align-items:center;gap:14px;padding-block:10px;flex-wrap:wrap;max-width:1400px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none}
+.brand svg{width:38px;height:38px}
+.brand b{font-family:var(--display);font-weight:900;font-size:24px;line-height:1}
+.brand small{display:block;color:var(--muted-d);font-size:12px;margin-top:2px}
+.tabs{display:flex;gap:6px;background:#FFFFFF0D;padding:4px;border-radius:14px;overflow-x:auto;max-width:100%}
+.tab{position:relative;white-space:nowrap;padding:9px 16px;border-radius:10px;color:var(--ice);font-weight:600;font-size:14px}
+.tab[aria-selected="true"]{background:var(--blue);color:#fff}
+.tab .dot{position:absolute;top:5px;left:6px;width:9px;height:9px;border-radius:50%;background:#FF5A6E;box-shadow:0 0 0 2px var(--navy)}
+.top-end{margin-inline-start:auto;display:flex;gap:8px;align-items:center}
+.pill-demo{font-size:12px;color:var(--ice);background:#FFFFFF14;padding:5px 12px;border-radius:999px;white-space:nowrap}
+.btn-ghost{color:var(--ice);font-size:13px;padding:7px 12px;border-radius:10px;border:1px solid var(--line-d);white-space:nowrap}
+.btn-ghost:hover{background:#FFFFFF10}
+.hint{max-width:1400px;margin:14px auto 0;color:var(--ice);font-size:14px;display:flex;gap:10px;align-items:flex-start;line-height:1.6}
+.hint b{color:#fff}
+.hint i{flex:none;font-style:normal;background:var(--blue);color:#fff;border-radius:8px;padding:1px 8px;font-size:12px;margin-top:2px}
+main{max-width:1400px;margin:14px auto 0;padding-block:0 110px}
+.disclaimer{max-width:1400px;margin:0 auto;padding-block:0 24px;color:var(--muted-d);font-size:12px;text-align:center;line-height:1.7}
+
+/* ---------- worker / phone ---------- */
+.worker-stage{display:flex;gap:40px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.side-note{max-width:380px;color:#fff;padding-top:30px}
+.side-note h2{font-family:var(--display);font-weight:900;font-size:34px;line-height:1.25;margin:0 0 10px;text-wrap:balance}
+.side-note h2 span{color:#E2C48F}
+.side-note p{color:var(--muted-d);line-height:1.8;margin:0 0 16px}
+.steps{display:grid;gap:10px;margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:10px;align-items:flex-start;color:var(--ice);font-size:14px;line-height:1.6}
+.steps li::before{content:counter(s);flex:none;width:24px;height:24px;border-radius:50%;background:#FFFFFF14;display:grid;place-items:center;font-size:12px;color:#fff}
+.steps li.done{color:#7FE0AE}
+.steps li.done::before{content:"✓";background:#1E9E5A}
+.phone{width:390px;max-width:100%;height:800px;border-radius:52px;background:#02050F;border:3px solid #2B3B78;padding:12px;box-shadow:0 40px 90px #0008;flex:none}
+.screen{position:relative;height:100%;border-radius:40px;overflow:hidden;background:var(--paper);display:flex;flex-direction:column}
+.sbar{display:flex;justify-content:space-between;padding:12px 26px 0;font-weight:700;font-size:14px;color:#fff;position:absolute;inset:0 0 auto;z-index:3}
+.island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:30px;border-radius:20px;background:#02050F;z-index:4}
+.pscroll{flex:1;overflow-y:auto;overscroll-behavior:contain}
+.phead{background:radial-gradient(260px 200px at 0% 30%,#ffffff22,transparent 70%),linear-gradient(160deg,#C4A06A,#9C7A44);padding:54px 18px 70px;color:#fff}
+.hrow{display:flex;align-items:center;gap:12px}
+.av{width:44px;height:44px;border-radius:14px;background:#ffffff33;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:20px}
+.hrow b{font-family:var(--display);font-size:20px;display:block}
+.hrow small{opacity:.9;font-size:12px}
+.bell{margin-inline-start:auto;width:40px;height:40px;border-radius:12px;background:#ffffff26;display:grid;place-items:center;position:relative}
+.bell .dot{position:absolute;top:8px;left:9px;width:9px;height:9px;border-radius:50%;background:#FF5A6E}
+.pbody{padding:0 14px 20px;margin-top:-56px;display:grid;gap:12px}
+.pc{background:var(--card);border-radius:20px;padding:16px;box-shadow:0 6px 22px #5a46280f}
+.pc h3{margin:0;font-family:var(--display);font-size:17px}
+.row{display:flex;align-items:center;gap:8px}
+.between{justify-content:space-between}
+.mut{color:var(--ink2);font-size:12px}
+.bigbtn{width:100%;margin-top:14px;padding:15px;border-radius:16px;background:linear-gradient(180deg,#B8925A,#9C7A44);color:#fff;font-family:var(--display);font-weight:800;font-size:19px;box-shadow:0 8px 20px #9c7a4455}
+.bigbtn:hover{filter:brightness(1.05)}
+.onshift{margin-top:14px;padding:12px;border-radius:14px;background:var(--goodbg);color:var(--good);font-weight:700;text-align:center}
+.sal{display:flex;align-items:center;gap:12px;margin:12px 0}
+.sal .rl{width:52px;height:52px;border-radius:14px;background:var(--goodbg);color:var(--good);display:grid;place-items:center;font-weight:800;font-size:14px}
+.sal b{font-family:var(--display);font-weight:900;font-size:36px;color:var(--good);line-height:1}
+.sal b.bump{animation:bump .9s ease}
+@keyframes bump{0%{transform:scale(1)}30%{transform:scale(1.15);color:#14b86a}100%{transform:scale(1)}}
+.li{display:flex;align-items:center;gap:8px;background:#F7F3EC;border-radius:12px;padding:10px 12px;font-size:13px;margin-top:8px}
+.li .amt{margin-inline-start:auto;font-weight:700}
+.plus{color:var(--good)}.minus{color:var(--bad)}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.chip.gold{background:var(--goldbg);color:var(--gold2);border:1px solid #d9c39f}
+.chip.good{background:var(--goodbg);color:var(--good)}
+.chip.bad{background:var(--badbg);color:var(--bad)}
+.chip.warn{background:var(--warnbg);color:var(--warn)}
+.chip.blue{background:#E8EEFF;color:#1633FF}
+.chip.grey{background:#F0ECE6;color:var(--ink2)}
+button.chip.gold:hover{background:#ead9bb}
+.docs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ring{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;text-align:center;font-size:12px;font-weight:700;color:var(--gold2);background:conic-gradient(var(--gold) var(--p),#EFE7DA 0);position:relative}
+.ring::after{content:"";position:absolute;inset:7px;border-radius:50%;background:#fff}
+.ring span{position:relative;z-index:1;line-height:1.3}
+.note{border:1px solid #d9c39f;background:#FFFBF3}
+.bnav{display:flex;justify-content:space-around;align-items:center;background:#fff;border-top:1px solid var(--rule);padding:8px 6px 18px}
+.bnav button{display:grid;justify-items:center;gap:3px;font-size:11px;color:#9a9087;min-width:56px}
+.bnav button[aria-current="true"]{color:var(--gold2);font-weight:700}
+.bnav svg{width:22px;height:22px}
+.bnav .plusb{width:44px;height:44px;border-radius:14px;background:var(--gold);color:#fff;display:grid;place-items:center;font-size:24px}
+.overlay{position:absolute;inset:0;z-index:10;background:#1f1a1466;display:flex;align-items:flex-end}
+.overlay.full{background:var(--paper);align-items:center;justify-content:center}
+.sheet{background:#fff;width:100%;border-radius:26px 26px 0 0;padding:20px 18px 26px;display:grid;gap:10px;animation:up .25s ease}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+.sheet h3{margin:0;font-family:var(--display)}
+.opt{display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;border:1px solid var(--rule);font-size:14px;text-align:start}
+.opt[aria-pressed="true"]{border-color:var(--gold);background:var(--goldbg)}
+.goldbtn{padding:13px;border-radius:14px;background:var(--gold);color:#fff;font-weight:700}
+.goldbtn[disabled]{opacity:.45;cursor:not-allowed}
+.verify{text-align:center;padding:30px;display:grid;justify-items:center;gap:12px}
+.vicon{width:130px;height:130px;border-radius:50%;border:3px solid var(--gold);display:grid;place-items:center;position:relative;color:var(--gold)}
+.vicon.scan::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:3px solid transparent;border-top-color:var(--gold);animation:spin 1s linear infinite}
+.vicon.ok{border-color:var(--good);color:var(--good);background:var(--goodbg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.verify h3{font-family:var(--display);font-size:22px;margin:4px 0 0}
+.vlist{display:grid;gap:8px;width:100%;max-width:280px;margin-top:8px}
+.vlist div{display:flex;gap:8px;align-items:center;justify-content:space-between;background:#fff;border-radius:12px;padding:10px 12px;font-size:13px}
+.geo{width:220px;height:130px;border-radius:16px;background:#EFE8DC;position:relative;overflow:hidden}
+.geo .zone{position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;background:#1E9E5A22;border:2px dashed #1E9E5A}
+.geo .me{position:absolute;left:56%;top:44%;width:16px;height:16px;border-radius:50%;background:#1633FF;border:3px solid #fff;box-shadow:0 0 0 6px #1633FF33}
+.geo .br{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;background:#fff;padding:2px 6px;border-radius:6px;margin-top:22px;white-space:nowrap}
+.notif{display:flex;gap:10px;align-items:flex-start}
+.notif .ic{width:36px;height:36px;border-radius:10px;background:var(--goldbg);color:var(--gold2);display:grid;place-items:center;flex:none;font-weight:800}
+.notif p{margin:2px 0 0;font-size:13px;line-height:1.6;color:var(--ink2)}
+.qiwa{display:inline-block;margin-top:8px;padding:8px 14px;border-radius:10px;background:#0F6E52;color:#fff;font-size:13px;font-weight:700;text-decoration:none}
+.empty{padding:26px 10px;text-align:center;color:var(--ink2);font-size:13px}
+
+/* ---------- dashboards ---------- */
+.dash{display:grid;grid-template-columns:240px minmax(0,1fr);background:var(--card);border-radius:22px;overflow:hidden;min-height:640px;box-shadow:0 30px 80px #0006}
+.sb{display:flex;flex-direction:column;gap:4px;padding:18px 14px;border-inline-start:1px solid var(--rule)}
+.dk .sb{background:linear-gradient(180deg,#FF7A35,var(--dk-or));color:#fff;border:0}
+.sbb{display:flex;align-items:center;gap:10px;padding:4px 6px 18px}
+.sbb .lg{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:16px}
+.mh .sbb .lg{background:linear-gradient(160deg,#C4A06A,#8E6C38);color:#fff;font-size:22px}
+.dk .sbb .lg{background:#fff;color:var(--dk-pk);font-size:15px;letter-spacing:-.5px}
+.sbb b{font-family:var(--display);font-size:20px;display:block;line-height:1.1}
+.sbb small{font-size:11px;opacity:.8}
+.nav{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;font-size:15px;text-align:start;width:100%}
+.nav svg{width:19px;height:19px;flex:none}
+.nav .cnt{margin-inline-start:auto;background:var(--bad);color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:1px 8px}
+.mh .nav{color:#4a4037}
+.mh .nav:hover{background:#F7F2EA}
+.mh .nav[aria-current="true"]{background:var(--goldbg);color:var(--gold2);font-weight:700}
+.dk .nav{color:#fff}
+.dk .nav:hover{background:#ffffff1c}
+.dk .nav[aria-current="true"]{background:#fff;color:var(--dk-or);font-weight:700}
+.sbfoot{margin-top:auto;padding:12px;border-radius:14px;font-size:12px;line-height:1.5}
+.mh .sbfoot{background:#F7F2EA}
+.dk .sbfoot{background:#ffffff22}
+.content{padding:22px 24px 30px;background:#FBFAF7;min-width:0;display:flex;flex-direction:column;gap:16px}
+.dk .content{background:var(--dk-bg)}
+.chead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.chead h2{margin:0;font-family:var(--display);font-size:26px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--good);background:var(--goodbg);padding:4px 10px;border-radius:999px}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good)}
+.chead .end{margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;white-space:nowrap}
+.btn.or{background:var(--dk-or);color:#fff}
+.btn.pk{background:var(--dk-pk);color:#fff}
+.btn.gd{background:var(--gold);color:#fff}
+.btn.ol{border:1px solid var(--rule);background:#fff}
+.btn.sm{padding:6px 12px;font-size:12px;border-radius:10px}
+.btn.gn{background:var(--good);color:#fff}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:#fff;border:1px solid var(--rule);border-radius:16px;padding:14px 16px}
+.kpi span{font-size:13px;color:var(--ink2)}
+.kpi b{display:block;font-family:var(--display);font-weight:900;font-size:32px;line-height:1.2;margin-top:4px}
+.kpi small{font-size:12px;font-weight:700}
+.grid2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px}
+.panel{background:#fff;border:1px solid var(--rule);border-radius:18px;padding:16px;min-width:0}
+.panel h3{margin:0 0 10px;font-family:var(--display);font-size:17px;display:flex;align-items:center;gap:8px}
+.panel h3 .mut{margin-inline-start:auto;font-family:var(--body);font-weight:500}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-size:12px;color:var(--ink2);font-weight:600;text-align:start;padding:8px 10px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:11px 10px;border-bottom:1px solid #F2EEE8;white-space:nowrap}
+tr.flag td{background:#FFF1EA}
+tr.flag td:first-child{box-shadow:inset -4px 0 0 var(--dk-or)}
+tr.hl td{animation:hl 2.4s ease}
+@keyframes hl{0%,40%{background:#FFF4CF}100%{background:transparent}}
+.item{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:14px;background:#F8F5F0;margin-bottom:8px}
+.item.new{animation:hl 2.4s ease}
+.item b{font-size:14px}
+.item .mut{display:block;margin-top:2px}
+.item .acts{margin-inline-start:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.alert{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--badbg);border:1px solid #f3c4c4;flex-wrap:wrap}
+.alert.ok{background:var(--goodbg);border-color:#bfe6cd}
+.alert b{font-size:14px}
+.mapbox{position:relative;border-radius:14px;overflow:hidden;background:#F3E9DF;aspect-ratio:16/10;max-width:100%}
+.mapbox svg{width:100%;height:100%;display:block}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--ink2);margin-top:8px;flex-wrap:wrap}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-inline-end:4px}
+.chat{display:flex;flex-direction:column;gap:8px;max-height:330px;overflow-y:auto;padding:4px}
+.msg{max-width:85%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.6}
+.msg.me{align-self:flex-start;background:var(--dk-or);color:#fff;border-end-start-radius:4px}
+.msg.bot{align-self:flex-end;background:#fff;border:1px solid var(--rule);border-end-end-radius:4px}
+.qs{display:flex;gap:6px;flex-wrap:wrap}
+.qs button{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid #f5c7ae;background:#fff;color:var(--dk-br)}
+.inrow{display:flex;gap:8px}
+input[type=text],select,textarea{font:inherit;font-size:14px;padding:10px 12px;border-radius:12px;border:1px solid var(--rule);background:#fff;color:var(--ink);width:100%;min-width:0}
+label.f{display:grid;gap:6px;font-size:13px;color:var(--ink2)}
+.modal{position:fixed;inset:0;z-index:50;background:#050A1Fa6;display:grid;place-items:center;padding:16px}
+.mbox{background:#fff;border-radius:20px;padding:22px;width:min(440px,calc(100vw - 32px));display:grid;gap:14px;animation:up .2s ease}
+.mbox h3{margin:0;font-family:var(--display);font-size:20px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg button{padding:10px;border-radius:12px;border:1px solid var(--rule);font-size:14px}
+.seg button[aria-pressed="true"]{border-color:var(--dk-pk);background:#FDEAF4;color:var(--dk-pk);font-weight:700}
+.diff{font-weight:700;color:var(--dk-or)}
+.count{display:flex;gap:10px;align-items:flex-end}
+.count b{font-family:var(--display);font-size:46px;font-weight:900;line-height:1;color:var(--gold2)}
+.bar{height:10px;border-radius:999px;background:#EFE7DA;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#d7b67b)}
+.inv{border:1px dashed #d9c39f;border-radius:14px;padding:14px;background:#FFFCF6;font-size:13px;display:grid;gap:6px}
+.inv .row{justify-content:space-between}
+.inv .tot{font-weight:800;font-size:16px;border-top:1px solid #eadcc4;padding-top:8px}
+.api{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;padding:20px 6px}
+.node{border:1px solid var(--rule);border-radius:18px;padding:18px;text-align:center;background:#fff}
+.node .lg{width:54px;height:54px;border-radius:14px;margin:0 auto 8px;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:24px;color:#fff}
+.wire{display:grid;gap:6px;justify-items:center;font-size:12px;color:var(--ink2);min-width:110px}
+.wire i{display:block;width:100%;height:2px;background:repeating-linear-gradient(90deg,var(--gold) 0 8px,transparent 8px 14px);animation:flow 1s linear infinite}
+@keyframes flow{to{background-position:-14px 0}}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:#F4EFE7;padding:2px 6px;border-radius:6px;direction:ltr;display:inline-block}
+
+/* ---------- shared log & toasts ---------- */
+.logbtn{position:fixed;left:calc(16px + env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--blue);color:#fff;border-radius:999px;padding:12px 18px;font-weight:700;font-size:14px;box-shadow:0 12px 30px #1633ff66;display:flex;gap:8px;align-items:center}
+.logbtn span{background:#fff;color:var(--blue);border-radius:999px;padding:0 8px;font-size:12px}
+.drawer{position:fixed;left:0;top:0;bottom:0;width:380px;max-width:100%;z-index:45;background:var(--navy);border-inline-end:1px solid var(--line-d);color:#fff;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));box-shadow:20px 0 60px #0008}
+.drawer h3{font-family:var(--display);margin:0;font-size:20px}
+.drawer p{color:var(--muted-d);font-size:13px;margin:6px 0 14px;line-height:1.6}
+.ev{border-top:1px solid var(--line-d);padding:12px 0;font-size:14px;line-height:1.6}
+.ev small{display:block;color:var(--muted-d);font-size:12px}
+.ev .who{font-size:11px;padding:2px 8px;border-radius:999px;background:#FFFFFF14;color:var(--ice);margin-inline-end:6px}
+.toasts{position:fixed;z-index:60;bottom:calc(76px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:grid;gap:8px;width:min(460px,calc(100% - 32px))}
+.toast{background:#0A1330;color:#fff;border:1px solid #2B3B78;border-radius:14px;padding:12px 14px;font-size:14px;box-shadow:0 14px 40px #0008;animation:up .25s ease;line-height:1.6}
+.toast b{color:#9CC4FF}
+
+@media (max-width:1000px){
+  .dash{grid-template-columns:1fr}
+  .sb{flex-direction:row;overflow-x:auto;border:0;border-bottom:1px solid var(--rule);padding:10px;gap:4px;align-items:center}
+  .sbb{padding:0 4px 0 10px}
+  .sbb small,.sbfoot{display:none}
+  .nav{width:auto;white-space:nowrap;padding:9px 12px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2{grid-template-columns:1fr}
+  .side-note{padding-top:0}
+}
+@media (max-width:560px){
+  .content{padding:16px 12px 24px}
+  .chead h2{font-size:21px}
+  .kpi b{font-size:26px}
+  .phone{height:760px;border-width:0;padding:0;border-radius:0;box-shadow:none;background:none}
+  .screen{border-radius:28px}
+  .island{display:none}
+  .top-end .pill-demo{display:none}
+  .api{grid-template-columns:1fr}
+  .wire i{width:2px;height:40px;background:repeating-linear-gradient(180deg,var(--gold) 0 8px,transparent 8px 14px)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="top wrap">
+  <div class="top-in">
+    <a class="brand" href="#worker" aria-label="وصل">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4C8DFF"/><stop offset="1" stop-color="#1633FF"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#wg)"/><path d="M17 41C24 19 40 19 47 41" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/><circle cx="17" cy="43" r="6.5" fill="#fff"/><circle cx="47" cy="43" r="6.5" fill="#fff"/></svg>
+      <span><b>وصل</b><small>سجل واحد… والكل يشوفه</small></span>
+    </a>
+    <nav class="tabs" role="tablist" aria-label="الواجهات">
+      <button class="tab" role="tab" data-view="worker">تطبيق العامل · كريم</button>
+      <button class="tab" role="tab" data-view="client">لوحة العميل · دانكن</button>
+      <button class="tab" role="tab" data-view="maharah">لوحة مهارة</button>
+    </nav>
+    <div class="top-end">
+      <button class="btn-ghost" id="installBtn" hidden style="background:#1633FF;color:#fff;border-color:#1633FF">ثبّت التطبيق</button>
+      <span class="pill-demo">بيانات تجريبية</span>
+      <button class="btn-ghost" data-act="reset">ابدأ من جديد</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap"><div class="hint" id="hint"></div></div>
+<main class="wrap" id="app"></main>
+<div class="wrap"><p class="disclaimer">نموذج تجريبي من فريق وصل لهاكاثون مهاراثون (تحدي 3.3 «عقدك بين يديك»). كل الأرقام والأسماء بيانات تجريبية. دانكن مثال توضيحي لعميل، وليست شراكة فعلية. الربط مع قوى وأجير وزاتكا وأنظمة مهارة محاكاة فقط.</p></div>
+
+<button class="logbtn" data-act="log">السجل المشترك <span class="num" id="logn">0</span></button>
+<div id="drawer"></div>
+<div id="modal"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(function(){
+const fmt=n=>n.toLocaleString('en-US');
+const I={
+ home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+ list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>',
+ grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+ user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+ cash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>',
+ pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
+ link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"/></svg>',
+ pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+ chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg>',
+ bell:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>',
+ face:'<svg viewBox="0 0 24 24" width="58" height="58" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="9.5" cy="10" r=".8" fill="currentColor"/><circle cx="14.5" cy="10" r=".8" fill="currentColor"/><path d="M12 10v3h-1M9.5 15.5c1.4 1 3.6 1 5 0"/></svg>',
+ req:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
+ sheet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></svg>'
+};
+
+const BR=[ // Dunkin branches (sample)
+ {id:'malqa',n:'فرع الملقا',x:300,y:70,need:9,here:8},
+ {id:'olaya',n:'فرع العليا',x:330,y:170,need:9,here:9},
+ {id:'nakheel',n:'فرع النخيل',x:250,y:140,need:8,here:7},
+ {id:'yasmin',n:'فرع الياسمين',x:400,y:80,need:8,here:8},
+ {id:'sahafa',n:'فرع الصحافة',x:450,y:120,need:8,here:8},
+ {id:'hittin',n:'فرع حطين',x:170,y:90,need:9,here:9},
+ {id:'murooj',n:'فرع المروج',x:390,y:200,need:8,here:8},
+ {id:'rabwa',n:'فرع الربوة',x:470,y:260,need:8,here:8},
+ {id:'sulaimania',n:'فرع السليمانية',x:300,y:240,need:8,here:8},
+ {id:'naseem',n:'فرع النسيم',x:560,y:220,need:8,here:8},
+ {id:'aqiq',n:'فرع العقيق',x:220,y:200,need:8,here:8},
+ {id:'rawdah',n:'فرع الروضة',x:520,y:170,need:9,here:9}
+];
+function fresh(){return {
+ view:'worker', wtab:'home', ctab:'home', mtab:'home',
+ shift:'idle', verifyStep:0,
+ days:21, daily:190, allow:235,
+ ded:{id:4613,label:'تأخير 20 دقيقة · الأربعاء',amt:45,status:'active',reason:''},
+ wnotes:[],
+ branches:BR.map(b=>({...b})),
+ absent:{name:'سالم',branch:'nakheel',status:'open'},
+ reqs:[],
+ tickets:[
+  {id:'t1',kind:'سؤال',title:'عميل تجريبي ب · فاتورة أكتوبر',sub:'جاوبه مدير الحساب الذكي ✓',done:true,src:'client'}
+ ],
+ chat:[{me:false,t:'هلا! أنا مدير حسابك الذكي في وصل. اسألني عن الحضور، الطلبات، أو الفاتورة.'}],
+ sheet:'none', // none|loaded|approved
+ payroll:'none', // none|generated
+ reminders:[
+  {id:'r1',name:'كريم',what:'عقد العمل',left:'3 شهور',ends:'29 يناير 2027',sent:false},
+  {id:'r2',name:'جوان',what:'رخصة العمل',left:'5 أسابيع',ends:'28 ديسمبر 2026',sent:false},
+  {id:'r3',name:'بلال',what:'عقد العمل',left:'7 أسابيع',ends:'9 يناير 2027',sent:false}
+ ],
+ log:[], unseen:{worker:0,client:0,maharah:0}, drawer:false, modal:null, flash:{}
+};}
+let S=fresh();
+const app=document.getElementById('app');
+
+/* ---------- helpers ---------- */
+function expected(){return S.days*S.daily+S.allow-(S.ded.status==='refunded'?0:S.ded.amt)}
+function presentDunkin(){return S.branches.reduce((a,b)=>a+b.here,0)}
+function needDunkin(){return S.branches.reduce((a,b)=>a+b.need,0)}
+const MAH_OTHER_HERE=1185, MAH_OTHER_NEED=1187; // other sample clients
+function time(){const d=new Date();return d.toLocaleTimeString('ar-SA-u-nu-latn',{hour:'numeric',minute:'2-digit'})}
+function emit(text,views){
+  S.log.unshift({text,views,t:time()});
+  views.forEach(v=>{if(v!==S.view)S.unseen[v]++});
+  const names={worker:'تطبيق كريم',client:'لوحة دانكن',maharah:'لوحة مهارة'};
+  const others=views.filter(v=>v!==S.view).map(v=>names[v]);
+  toast(text+(others.length?'<br><b>وصل إلى: '+others.join(' و')+'</b>':''));
+}
+function toast(h){const t=document.createElement('div');t.className='toast';t.innerHTML=h;const box=document.getElementById('toasts');box.appendChild(t);while(box.children.length>2)box.firstChild.remove();setTimeout(()=>t.remove(),4500)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- WORKER ---------- */
+function stepsDone(){return [S.shift==='on',S.ded.status!=='active',S.wnotes.some(n=>n.kind==='renew')]}
+function worker(){
+  const sd=stepsDone();
+  return `<div class="worker-stage">
+   <div class="phone"><div class="screen">
+     <div class="island"></div>
+     <div class="sbar" style="color:${S.wtab==='home'?'#fff':'#1f1a14'}"><span class="num">8:02</span><span>4G ▮▮▮</span></div>
+     ${S.wtab==='home'?wHome():wReqs()}
+     <div class="bnav">
+       <button data-act="wtab" data-v="home" aria-current="${S.wtab==='home'}">${I.home}الرئيسية</button>
+       <button data-act="wtab" data-v="reqs" aria-current="${S.wtab==='reqs'}">${I.list}طلباتي</button>
+       <span class="plusb" aria-hidden="true">+</span>
+       <button data-act="soon">${I.grid}خدماتي</button>
+       <button data-act="soon">${I.user}بروفايلي</button>
+     </div>
+     ${wOverlay()}
+   </div></div>
+   <div class="side-note">
+     <h2>التطبيق اللي يستخدمونه اليوم… <span>وأضفنا له اللي كان ناقصه</span></h2>
+     <p>كريم كاشير عند دانكن في فرع الملقا، عن طريق مهارة. جرّب يومه:</p>
+     <ol class="steps">
+       <li class="${sd[0]?'done':''}">اضغط «ابدأ الشفت». التطبيق يتحقق إنه هو، وإن موقعه داخل نطاق الفرع.</li>
+       <li class="${sd[0]?'done':''}">شوف راتبك المتوقع يتحدث قدامك.</li>
+       <li class="${sd[1]?'done':''}">اعترض على خصم التأخير، وبعدها روح للوحة مهارة وشوف الاعتراض وصلها.</li>
+       <li class="${sd[2]?'done':''}">من لوحة مهارة أرسل تذكير تجديد العقد، وارجع هنا تلقاه.</li>
+     </ol>
+   </div>
+  </div>`;
+}
+function wHome(){
+  const bell=S.wnotes.some(n=>!n.read);
+  const d=S.ded;
+  const dedChip={active:`<button class="chip gold" data-act="dispute">اعتراض</button>`,disputed:`<span class="chip warn">قيد المراجعة</span>`,refunded:`<span class="chip good">انقبل · رجع المبلغ</span>`,rejected:`<span class="chip bad">انرفض</span>`}[d.status];
+  const renew=S.wnotes.find(n=>n.kind==='renew');
+  return `<div class="pscroll">
+   <div class="phead"><div class="hrow"><div class="av">ك</div><div><b>مرحبًا كريم</b><small>كاشير · دانكن · فرع الملقا</small></div>
+     <button class="bell" data-act="wtab" data-v="reqs" aria-label="التنبيهات">${I.bell}${bell?'<span class="dot"></span>':''}</button></div></div>
+   <div class="pbody">
+     <div class="pc">
+       <div class="row between"><h3>شفت اليوم</h3><span class="mut">السبت 21 نوفمبر</span></div>
+       <div class="mut" style="margin-top:6px">📍 فرع الملقا · 8:00 ص إلى 4:00 م</div>
+       ${S.shift==='on'?`<div class="onshift">● الشفت شغال من <span class="num">8:02</span> · داخل نطاق الفرع</div>`:`<button class="bigbtn" data-act="start">ابدأ الشفت</button>`}
+     </div>
+     ${renew&&!renew.read?`<div class="pc note"><div class="notif"><div class="ic">!</div><div><b>عقدك يخلص بعد 3 شهور</b><p>عقد العمل ينتهي 29 يناير 2027. جدّده الحين عن طريق قوى قبل لا يفوتك.</p><a class="qiwa" href="https://qiwa.sa" target="_blank" rel="noopener">افتح قوى للتجديد</a></div></div></div>`:''}
+     <div class="pc">
+       <div class="row between"><h3>راتبك المتوقع لهذا الشهر</h3><span class="mut" style="color:var(--gold2)">التفاصيل</span></div>
+       <div class="sal"><div class="rl">ريال</div><div><div class="mut">يتحدث مع كل حضور وأوفر تايم</div><b class="num ${S.flash.sal?'bump':''}">${fmt(expected())}</b></div></div>
+       <div class="li">حضور <span class="num">${S.days}</span> يوم × <span class="num">${S.daily}</span><span class="amt plus num">+${fmt(S.days*S.daily)}</span></div>
+       <div class="li">بدل مواصلات<span class="amt plus num">+${S.allow}</span></div>
+       <div class="li" style="${d.status==='refunded'?'text-decoration:line-through;opacity:.6':''}">${d.label} ${dedChip}<span class="amt minus num">−${d.amt}</span></div>
+     </div>
+     <div class="pc"><h3 style="margin-bottom:10px">صلاحية الوثائق</h3>
+       <div class="docs">
+         <div style="text-align:center"><div class="ring" style="--p:25%"><span>3 شهور<br>متبقي</span></div><b style="font-size:14px">عقد العمل</b><div class="mut">ينتهي 29 يناير 2027</div></div>
+         <div style="text-align:center"><div class="ring" style="--p:90%"><span>10 شهور<br>متبقي</span></div><b style="font-size:14px">التأمين</b><div class="mut">ينتهي 27 سبتمبر 2027</div></div>
+       </div>
+     </div>
+   </div></div>`;
+}
+function wReqs(){
+  const d=S.ded;
+  const items=[];
+  S.wnotes.forEach(n=>items.push(`<div class="pc"><div class="notif"><div class="ic">${n.kind==='renew'?'!':'✓'}</div><div><b>${n.title}</b><p>${n.body}</p>${n.kind==='renew'?'<a class="qiwa" href="https://qiwa.sa" target="_blank" rel="noopener">افتح قوى للتجديد</a>':''}</div></div></div>`));
+  if(d.status!=='active') items.push(`<div class="pc"><div class="row between"><b>اعتراض على خصم #${d.id}</b>${{disputed:'<span class="chip warn">قيد المراجعة</span>',refunded:'<span class="chip good">انقبل</span>',rejected:'<span class="chip bad">انرفض</span>'}[d.status]}</div><p class="mut" style="margin:6px 0 0">${d.label} · ${d.amt} ريال<br>السبب: ${esc(d.reason)}</p></div>`);
+  return `<div class="pscroll" style="padding:56px 14px 20px"><h3 style="font-family:var(--display);font-size:22px;margin:0 0 12px">طلباتي والتنبيهات</h3><div style="display:grid;gap:10px">${items.length?items.join(''):'<div class="empty">ما عندك طلبات أو تنبيهات الحين.<br>جرّب تعترض على خصم من الرئيسية.</div>'}</div></div>`;
+}
+function wOverlay(){
+  if(S.shift==='verifying'){
+    const st=S.verifyStep;
+    return `<div class="overlay full"><div class="verify">
+      ${st<2?`<div class="vicon ${st===1?'ok':'scan'}">${st===1?I.check.replace('<svg','<svg width="58" height="58"'):I.face}</div>
+      <h3>${st===1?'تمام، هذا أنت':'تحقق سريع'}</h3><p class="mut" style="margin:0">${st===1?'تطابق الوجه مع ملفك في مهارة':'نتأكد إنه أنت اللي تبدأ الشفت'}</p>`
+      :`<div class="geo"><div class="zone"></div><div class="me"></div><div class="br">فرع الملقا</div></div>
+      <h3>${st===3?'موقعك داخل نطاق الفرع':'نتحقق من موقعك…'}</h3><p class="mut num" style="margin:0">${st===3?'تبعد 38 م · النطاق المسموح 150 م':'فرع الملقا'}</p>`}
+      <div class="vlist">
+        <div>التحقق من الهوية ${st>=1?'<span class="chip good">✓ تم</span>':'<span class="chip grey">جارٍ</span>'}</div>
+        <div>الموقع داخل الفرع ${st>=3?'<span class="chip good">✓ تم</span>':st>=2?'<span class="chip grey">جارٍ</span>':'<span class="chip grey">بانتظار</span>'}</div>
+      </div>
+    </div></div>`;
+  }
+  if(S.modal==='dispute'){
+    const rs=['زحمة طريق، وأبلغت المشرف وقتها','وصلت بالوقت والتطبيق ما سجّل','تأخر باص النقل التابع للشركة'];
+    return `<div class="overlay" data-act="close-bg"><div class="sheet" role="dialog" aria-label="اعتراض على خصم">
+      <h3>اعتراض على خصم #${S.ded.id}</h3><div class="mut">${S.ded.label} · ${S.ded.amt} ريال</div>
+      ${rs.map(r=>`<button class="opt" data-act="reason" data-v="${esc(r)}" aria-pressed="${S.pick===r}">${esc(r)}</button>`).join('')}
+      <button class="goldbtn" data-act="send-dispute" ${S.pick?'':'disabled'}>أرسل الاعتراض لمهارة</button>
+      <button class="mut" data-act="close">إلغاء</button>
+    </div></div>`;
+  }
+  return '';
+}
+
+/* ---------- CLIENT (Dunkin, illustrative) ---------- */
+function client(){
+  const tabs=[['home','الرئيسية',I.home],['staff','متابعة العمالة',I.pin],['reqs','الطلبات',I.list],['recon','مطابقة الحضور',I.sheet],['ai','مدير الحساب الذكي',I.chat]];
+  const open=S.reqs.filter(r=>r.status!=='done').length;
+  return `<div class="dash dk">
+   <aside class="sb">
+     <div class="sbb"><div class="lg">DD</div><div><b>دانكن</b><small>بوابة العميل · مثال توضيحي</small></div></div>
+     ${tabs.map(([k,t,ic])=>`<button class="nav" data-act="ctab" data-v="${k}" aria-current="${S.ctab===k}">${ic}${t}${k==='reqs'&&open?`<span class="cnt num">${open}</span>`:''}</button>`).join('')}
+     <div class="sbfoot">مدير حسابك في مهارة<br><b>متصل عبر وصل</b></div>
+   </aside>
+   <section class="content">${{home:cHome,staff:cStaff,reqs:cReqs,recon:cRecon,ai:cAI}[S.ctab]()}</section>
+  </div>`;
+}
+function cHead(t){return `<div class="chead"><h2>${t}</h2><span class="live">مباشر</span><div class="end"><button class="btn pk" data-act="newreq">+ طلب جديد</button><button class="btn or" data-act="ctab" data-v="ai">اسأل مدير الحساب</button></div></div>`}
+function cKpis(){
+  const open=S.reqs.filter(r=>r.status!=='done').length;
+  return `<div class="kpis">
+   <div class="kpi"><span>حاضرين الحين</span><b class="num">${presentDunkin()}<small style="font-size:14px;color:var(--ink2)"> / ${needDunkin()}</small></b><small style="color:${presentDunkin()<needDunkin()?'var(--bad)':'var(--good)'}">${needDunkin()-presentDunkin()?`${needDunkin()-presentDunkin()} ناقص`:'مكتمل'}</small></div>
+   <div class="kpi"><span>الفروع</span><b class="num">12</b><small style="color:var(--ink2)">كلها بالرياض</small></div>
+   <div class="kpi"><span>ساعات العمل هالأسبوع</span><b class="num">${fmt(684+(S.shift==='on'?8:0))}</b><small style="color:var(--ink2)">من الحضور الذكي</small></div>
+   <div class="kpi"><span>طلبات مفتوحة</span><b class="num">${open}</b><small style="color:var(--ink2)">${open?'تتابعها مهارة':'ما فيه شي معلق'}</small></div>
+  </div>`;
+}
+function bStatus(b){
+  if(b.id==='nakheel'&&S.absent.status==='replacement')return `<span class="chip blue">بديل في الطريق</span>`;
+  if(b.here<b.need)return `<span class="chip bad">● ${b.need-b.here} ما حضر</span>`;
+  return `<span class="chip good">● مكتمل</span>`;
+}
+function map(){
+  const dots=S.branches.map(b=>{const c=b.id==='nakheel'&&S.absent.status==='replacement'?'#1633FF':b.here<b.need?'#D23B3B':'#1E9E5A';
+    return `<g><circle cx="${b.x}" cy="${b.y}" r="16" fill="${c}" opacity=".18"/><circle cx="${b.x}" cy="${b.y}" r="7" fill="${c}"/><text x="${b.x}" y="${b.y-14}" text-anchor="middle" font-size="12" fill="#5A2D0C" font-family="IBM Plex Sans Arabic">${b.n.replace('فرع ','')} ${b.here}/${b.need}</text></g>`}).join('');
+  return `<div class="mapbox"><svg viewBox="0 0 640 400" role="img" aria-label="خريطة الفروع"><rect width="640" height="400" fill="#F3E9DF"/>
+   <path d="M0 300 C160 280 260 320 640 250" stroke="#fff" stroke-width="14" fill="none"/><path d="M340 0 C330 120 360 260 300 400" stroke="#fff" stroke-width="14" fill="none"/><path d="M80 0 L140 400" stroke="#fff" stroke-width="8" fill="none"/><path d="M0 140 L640 110" stroke="#fff" stroke-width="8" fill="none"/>
+   <text x="20" y="385" font-size="12" fill="#a88" font-family="IBM Plex Sans Arabic">الرياض · مواقع تقريبية</text>${dots}</svg></div>
+   <div class="legend"><span><i style="background:#1E9E5A"></i>مكتمل</span><span><i style="background:#D23B3B"></i>فيه غياب</span><span><i style="background:#1633FF"></i>بديل في الطريق</span></div>`;
+}
+function bTable(rows){
+  return `<div class="tw"><table><thead><tr><th>الفرع</th><th>حاضر</th><th>المطلوب</th><th>الحالة</th></tr></thead><tbody>${rows.map(b=>`<tr class="${S.flash['b_'+b.id]?'hl':''}"><td>${b.n}</td><td class="num">${b.here}</td><td class="num">${b.need}</td><td>${bStatus(b)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function cHome(){
+  return `${cHead('متابعة العمالة')}${cKpis()}
+   <div class="grid2"><div class="panel"><h3>وين عمالك الحين<span class="mut">كل فروعك</span></h3>${map()}</div>
+   <div class="panel"><h3>الفروع<span class="mut">آخر تحديث الحين</span></h3>${bTable(S.branches.slice(0,6))}<button class="btn ol sm" style="margin-top:10px" data-act="ctab" data-v="staff">كل الفروع والعمال</button></div></div>`;
+}
+function cStaff(){
+  const ws=[['كريم','كاشير','malqa'],['ماريا','باريستا','olaya'],['سالم','كاشير','nakheel'],['جوان','باريستا','yasmin'],['بلال','تحضير','malqa'],['عمران','كاشير','hittin']];
+  const st=(n,b)=>{if(n==='كريم')return S.shift==='on'?'<span class="chip good">حاضر · 8:02 · تحقق ✓</span>':'<span class="chip warn">ما بدأ الشفت بعد</span>';
+    if(n==='سالم')return S.absent.status==='replacement'?'<span class="chip blue">غايب · بديله في الطريق</span>':'<span class="chip bad">غايب</span>';return '<span class="chip good">حاضر · تحقق ✓</span>'};
+  return `${cHead('متابعة العمالة')}
+  <div class="panel"><h3>العمال الحين<span class="mut">عيّنة من العمال · بيانات تجريبية</span></h3><div class="tw"><table><thead><tr><th>العامل</th><th>الدور</th><th>الفرع</th><th>الحالة</th></tr></thead><tbody>${ws.map(([n,r,b])=>`<tr class="${S.flash['w_'+n]?'hl':''}"><td><b>${n}</b></td><td>${r}</td><td>${S.branches.find(x=>x.id===b).n}</td><td>${st(n,b)}</td></tr>`).join('')}</tbody></table></div></div>
+  <div class="panel"><h3>كل الفروع</h3>${bTable(S.branches)}</div>`;
+}
+function reqStatus(r){return r.status==='done'?'<span class="chip good">معتمد · تم التنفيذ</span>':'<span class="chip warn">وصل مهارة · قيد المتابعة</span>'}
+function cReqs(){
+  return `${cHead('الطلبات')}
+  <div class="panel"><h3>طلباتك<span class="mut">بدل الإيميلات</span></h3>
+   ${S.reqs.length?S.reqs.map(r=>`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':r.type==='بديل'?'blue':'gold'}">${r.type}</span><div><b>${r.type==='عامل إضافي'?'عامل إضافي':r.type==='بديل'?'بديل لعامل':'شكوى'} · ${r.branchName}</b><span class="mut">${esc(r.note||'بدون ملاحظة')} · ${r.t}</span></div><div class="acts">${reqStatus(r)}</div></div>`).join('')
+   :`<div class="empty">ما رفعت طلبات اليوم.<br><button class="btn pk" style="margin-top:10px" data-act="newreq">ارفع أول طلب</button></div>`}
+  </div>`;
+}
+function cRecon(){
+  const rows=[['فرع الملقا',21,21+(S.shift==='on'?1:0)-(S.shift==='on'?1:0)],['فرع العليا',7,8],['فرع النخيل',8,8],['فرع الياسمين',10,10]];
+  let body;
+  if(S.sheet==='none') body=`<div class="panel" style="text-align:center;padding:40px 16px"><h3 style="justify-content:center">عندك شيت حضور خاص؟</h3><p class="mut" style="max-width:420px;margin:0 auto 14px;line-height:1.8">ارفعه وحنا نطابقه مع الحضور الذكي (تحقق الهوية + الموقع) ونبيّن لك الفرق قبل الفاتورة.</p><button class="btn or" data-act="loadsheet">ارفع شيت دانكن · نوفمبر (عيّنة)</button></div>`;
+  else body=`<div class="alert ${S.sheet==='approved'?'ok':''}" style="${S.sheet==='approved'?'':'background:#FFF1EA;border-color:#f8cdb6'}"><b>${S.sheet==='approved'?'✓ اعتمدت المطابقة ووصلت مهارة. الفاتورة تطلع على الأرقام المتفق عليها.':'فيه فرق في فرع العليا: يوم واحد ما سجّلتوه عندكم، والحضور الذكي مثبته بالهوية والموقع.'}</b>${S.sheet==='approved'?'':'<button class="btn or sm" data-act="approvesheet" style="margin-inline-start:auto">اعتمد المطابقة</button>'}</div>
+   <div class="panel"><h3>مطابقة الحضور · أيام الحضور لكل فرع<span class="mut">شيتكم مقابل الحضور الذكي</span></h3><div class="tw"><table><thead><tr><th>الفرع</th><th>شيتكم</th><th>الحضور الذكي</th><th>الفرق</th></tr></thead><tbody>
+   ${rows.map(([n,a,b])=>`<tr class="${a!==b?'flag':''}"><td>${n}</td><td class="num">${a}</td><td class="num">${b}</td><td>${a!==b?`<span class="diff">+${b-a} يوم · عامل ما سُجل عندكم</span>`:'<span class="chip good">مطابق</span>'}</td></tr>`).join('')}
+   </tbody></table></div><p class="mut" style="margin:10px 0 0">كل يوم في الحضور الذكي عليه تحقق هوية وموقع وقت بداية الشفت.</p></div>`;
+  return `${cHead('مطابقة الحضور')}${body}`;
+}
+function cAI(){
+  const qs=['كم عامل حاضر الحين؟','وين وصل طلبي؟','ليش فيه فرق في الفاتورة؟','متى تخلص عقود عمالي؟'];
+  return `${cHead('مدير الحساب الذكي')}
+  <div class="panel" style="max-width:760px">
+   <div class="chat" id="chat">${S.chat.map(m=>`<div class="msg ${m.me?'me':'bot'}">${m.me?esc(m.t):m.t}</div>`).join('')}</div>
+   <div class="qs" style="margin:10px 0">${qs.map(q=>`<button data-act="ask" data-v="${q}">${q}</button>`).join('')}</div>
+   <form class="inrow" id="askf"><input type="text" id="askin" placeholder="اكتب سؤالك… مثل: أبي أعرف ساعات فرع العليا" aria-label="سؤالك"><button class="btn or" type="submit">أرسل</button></form>
+   <p class="mut" style="margin:10px 0 0">يجاوب من السجل نفسه. اللي ما يقدر يجاوبه يحوّله تذكرة لمدير حسابك في مهارة.</p>
+  </div>`;
+}
+function answer(q){
+  const s=q.replace(/[؟?]/g,'');
+  if(/حاضر|حضور الحين|كم عامل/.test(s))return `حاضرين الحين <b class="num">${presentDunkin()}</b> من <b class="num">${needDunkin()}</b> في 12 فرع.${S.absent.status==='open'?' سالم في فرع النخيل ما حضر، ومهارة شافت التنبيه.':' بديل سالم في الطريق لفرع النخيل.'}`;
+  if(/طلب/.test(s)){const r=S.reqs[0];return r?`آخر طلب: <b>${r.type} · ${r.branchName}</b>. حالته: ${r.status==='done'?'اعتمدته مهارة وتم التنفيذ ✓':'وصل مهارة وقيد المتابعة.'}`:'ما رفعت طلبات اليوم. تقدر ترفع طلب عامل إضافي أو بديل أو شكوى من زر «طلب جديد».'}
+  if(/فاتور|فرق/.test(s))return S.sheet==='none'?'ارفع شيت حضوركم من «مطابقة الحضور» وأطابقه لك مع الحضور الذكي وأبيّن أي فرق قبل الفاتورة.':'الفرق يوم واحد في فرع العليا: عامل حاضر بتحقق الهوية والموقع وما انسجل في شيتكم. '+(S.sheet==='approved'?'واعتمدتوا المطابقة ✓':'تقدر تعتمد المطابقة من صفحتها.');
+  if(/عقد|عقود|تجديد/.test(s))return '3 عقود تخلص خلال 3 شهور. مهارة ترسل تذكير للعامل نفسه ويجدد عبر قوى، وأنت تشوف الحالة هنا.';
+  return null;
+}
+
+/* ---------- MAHARAH ---------- */
+function maharah(){
+  const tabs=[['home','لوحة المتابعة',I.grid],['pay','الرواتب والفواتير',I.cash],['contracts','العقود والتجديد',I.pen],['api','التكامل',I.link]];
+  const pend=S.tickets.filter(t=>!t.done).length+S.reqs.filter(r=>r.status!=='done').length;
+  return `<div class="dash mh">
+   <aside class="sb">
+     <div class="sbb"><div class="lg">م</div><div><b>مهارة</b><small>لوحة وصل · لمدير الحساب</small></div></div>
+     ${tabs.map(([k,t,ic])=>`<button class="nav" data-act="mtab" data-v="${k}" aria-current="${S.mtab===k}">${ic}${t}${k==='home'&&pend?`<span class="cnt num">${pend}</span>`:''}${k==='contracts'&&S.reminders.some(r=>!r.sent)?`<span class="cnt num" style="background:var(--gold)">${S.reminders.filter(r=>!r.sent).length}</span>`:''}</button>`).join('')}
+     <div class="sbfoot">مدير حساب<br><b>فريق مهارة</b></div>
+   </aside>
+   <section class="content">${{home:mHome,pay:mPay,contracts:mContracts,api:mApi}[S.mtab]()}</section>
+  </div>`;
+}
+function mHome(){
+  const here=MAH_OTHER_HERE+presentDunkin(), need=MAH_OTHER_NEED+needDunkin();
+  const kareemLate=S.shift!=='on';
+  const items=[];
+  S.reqs.forEach(r=>items.push(`<div class="item ${S.flash['r_'+r.id]?'new':''}"><span class="chip ${r.type==='شكوى'?'bad':'gold'}">${r.type==='شكوى'?'شكوى':'طلب'}</span><div><b>${r.type} · دانكن · ${r.branchName}</b><span class="mut">من بوابة العميل · ${r.t}${r.note?' · '+esc(r.note):''}</span></div><div class="acts">${r.status==='done'?'<span class="chip good">تم ✓</span>':`<button class="btn gd sm" data-act="approve-req" data-v="${r.id}">اعتمد ونفّذ</button>`}</div></div>`));
+  if(S.ded.status!=='active') items.push(`<div class="item ${S.flash.disp?'new':''}"><span class="chip warn">اعتراض</span><div><b>كريم · خصم تأخير #${S.ded.id} · ${S.ded.amt} ريال</b><span class="mut">من تطبيق العامل · السبب: ${esc(S.ded.reason)}</span></div><div class="acts">${S.ded.status==='disputed'?`<button class="btn gn sm" data-act="disp-ok">قبول</button><button class="btn ol sm" data-act="disp-no">رفض</button>`:S.ded.status==='refunded'?'<span class="chip good">انقبل · رجع المبلغ</span>':'<span class="chip bad">انرفض</span>'}</div></div>`);
+  S.tickets.forEach(t=>items.push(`<div class="item ${S.flash['t_'+t.id]?'new':''}"><span class="chip blue">${t.kind}</span><div><b>${esc(t.title)}</b><span class="mut">${t.sub}</span></div>${t.done?'':`<div class="acts"><button class="btn ol sm" data-act="ticket-done" data-v="${t.id}">تم الرد</button></div>`}</div>`));
+  return `<div class="chead"><h2>لوحة المتابعة</h2><span class="live">مباشر · كل العملاء</span></div>
+  <div class="kpis">
+   <div class="kpi"><span>حاضرين الحين</span><b class="num">${fmt(here)}</b><small style="color:var(--good)">من ${fmt(need)}</small></div>
+   <div class="kpi"><span>ما حضروا</span><b class="num" style="color:var(--bad)">${need-here}</b><small style="color:var(--bad)">نتابعهم الحين</small></div>
+   <div class="kpi"><span>مهلة صرف الرواتب</span><b class="num" style="color:var(--gold2)">9 <small style="font-size:15px;color:var(--ink2)">أيام</small></b><small style="color:var(--gold2)">آخر الشهر</small></div>
+   <div class="kpi"><span>عقود تخلص قريب</span><b class="num" style="color:var(--gold2)">${S.reminders.filter(r=>!r.sent).length}</b><small style="color:var(--gold2)">تحتاج تذكير</small></div>
+  </div>
+  ${S.absent.status==='open'?`<div class="alert"><b>⚠ تنبيه غياب: سالم (كاشير) ما حضر شفت 8:00 في دانكن · فرع النخيل</b><button class="btn gd sm" data-act="send-repl" style="margin-inline-start:auto">أرسل بديل</button></div>`:`<div class="alert ok"><b>✓ بديل سالم في الطريق لفرع النخيل، والعميل شايف الحالة.</b></div>`}
+  ${kareemLate?`<div class="alert" style="background:var(--warnbg);border-color:#f1d9a8"><b>كريم · دانكن فرع الملقا: الشفت بدأ 8:00 وما سجّل حضور</b><span class="mut" style="margin-inline-start:auto">يتحدث أول ما يبدأ الشفت</span></div>`:''}
+  <div class="grid2">
+   <div class="panel"><h3>العملاء اليوم<span class="mut">حضور مباشر</span></h3><div class="tw"><table><thead><tr><th>العميل</th><th>الفروع</th><th>الحضور</th><th>الحالة</th></tr></thead><tbody>
+     <tr class="${S.flash.dk?'hl':''}"><td><b>دانكن</b></td><td class="num">12</td><td class="num">${presentDunkin()} / ${needDunkin()}</td><td>${presentDunkin()<needDunkin()?`<span class="chip bad">● ${needDunkin()-presentDunkin()} ما حضر</span>`:'<span class="chip good">● مكتمل</span>'}</td></tr>
+     <tr><td>عميل تجريبي ب</td><td class="num">8</td><td class="num">410 / 410</td><td><span class="chip good">● مكتمل</span></td></tr>
+     <tr><td>عميل تجريبي ج</td><td class="num">4</td><td class="num">288 / 290</td><td><span class="chip warn">● 2 متأخرين</span></td></tr>
+     <tr><td>عميل تجريبي د</td><td class="num">9</td><td class="num">487 / 487</td><td><span class="chip good">● مكتمل</span></td></tr>
+   </tbody></table></div></div>
+   <div class="panel"><h3>طلبات العملاء وتذاكرهم<span class="mut">بدل الإيميلات</span></h3>${items.join('')||'<div class="empty">ما فيه طلبات جديدة.</div>'}
+     <div class="row" style="color:var(--good);font-weight:700;font-size:13px;margin-top:6px">✉ إيميلات اليوم: 0</div></div>
+  </div>`;
+}
+function mPay(){
+  const ws=[['كريم','دانكن','فرع الملقا',S.days,S.daily,S.ded.status==='refunded'?0:S.ded.amt],['ماريا','دانكن','فرع العليا',22,190,0],['سالم','دانكن','فرع النخيل',19,180,0],['جوان','دانكن','فرع الياسمين',22,180,0]];
+  const tot=ws.reduce((a,w)=>a+w[3]*w[4]+235-w[5],0);
+  const invDays=ws.reduce((a,w)=>a+w[3],0)+(S.sheet!=='none'?1:0);
+  const rate=260;
+  return `<div class="chead"><h2>الرواتب والفواتير</h2><span class="live">من نفس سجل الحضور</span><div class="end"><button class="btn gd" data-act="gen" ${S.payroll==='generated'?'disabled':''}>${S.payroll==='generated'?'✓ تم التوليد':'ولّد الرواتب والفاتورة'}</button></div></div>
+  <div class="kpis" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+   <div class="kpi"><span>مهلة صرف رواتب نوفمبر</span><div class="count" style="margin-top:6px"><b class="num">9</b><span class="mut">أيام متبقية · آخر يوم 30 نوفمبر</span></div><div class="bar" style="margin-top:10px"><i style="width:70%"></i></div></div>
+   <div class="kpi"><span>جاهزية الفاتورة</span><b style="font-size:20px;margin-top:8px">${S.sheet==='approved'?'<span style="color:var(--good)">العميل اعتمد المطابقة ✓</span>':S.sheet==='loaded'?'<span style="color:var(--warn)">العميل رفع شيت · بانتظار اعتماده</span>':'<span style="color:var(--ink2)">ما فيه اعتراض من العميل</span>'}</b></div>
+  </div>
+  <div class="grid2">
+   <div class="panel"><h3>مسير الرواتب · عيّنة دانكن<span class="mut">بيانات تجريبية</span></h3><div class="tw"><table><thead><tr><th>العامل</th><th>الفرع</th><th>أيام</th><th>خصم</th><th>الصافي</th><th>الحالة</th></tr></thead><tbody>
+   ${ws.map(w=>`<tr class="${w[0]==='كريم'&&S.flash.payk?'hl':''}"><td><b>${w[0]}</b></td><td>${w[2]}</td><td class="num">${w[3]}</td><td class="num">${w[5]?'−'+w[5]:'—'}</td><td class="num"><b>${fmt(w[3]*w[4]+235-w[5])}</b></td><td>${S.payroll==='generated'?'<span class="chip good">جاهز للصرف</span>':(w[0]==='كريم'&&S.ded.status==='disputed')?'<span class="chip warn">فيه اعتراض</span>':'<span class="chip grey">مسودة</span>'}</td></tr>`).join('')}
+   </tbody></table></div><p class="mut" style="margin:10px 0 0">نفس الأرقام اللي يشوفها كل عامل في «راتبك المتوقع».</p></div>
+   <div class="panel"><h3>فاتورة دانكن · نوفمبر</h3>${S.payroll==='generated'?`<div class="inv">
+     <div class="row"><span>أيام عمل محققة (عيّنة 4 عمال)</span><b class="num">${invDays}</b></div>
+     <div class="row"><span>سعر اليوم (تجريبي)</span><b class="num">${rate} ريال</b></div>
+     <div class="row"><span>المجموع قبل الضريبة</span><b class="num">${fmt(invDays*rate)}</b></div>
+     <div class="row"><span>ضريبة القيمة المضافة 15%</span><b class="num">${fmt(Math.round(invDays*rate*.15))}</b></div>
+     <div class="row tot"><span>الإجمالي</span><span class="num">${fmt(Math.round(invDays*rate*1.15))} ريال</span></div>
+     <div class="row"><span class="chip good">جاهزة للإرسال لزاتكا (محاكاة)</span><span class="chip blue">نفس سجل الحضور</span></div></div>`
+     :`<div class="empty">اضغط «ولّد الرواتب والفاتورة».<br>الاثنين يطلعون من نفس سجل الحضور، فما يصير فرق بين اللي انصرف للعامل واللي انفوتر على العميل.</div>`}</div>
+  </div>`;
+}
+function mContracts(){
+  return `<div class="chead"><h2>العقود والتجديد</h2><span class="live">تذكير يوصل للعامل نفسه</span></div>
+  <div class="panel"><h3>تخلص خلال 3 شهور<span class="mut">بيانات تجريبية</span></h3>
+   ${S.reminders.map(r=>`<div class="item ${S.flash['rm_'+r.id]?'new':''}"><span class="chip gold">${r.left}</span><div><b>${r.name} · ${r.what}</b><span class="mut">ينتهي ${r.ends} · دانكن</span></div><div class="acts">${r.sent?'<span class="chip good">✓ وصله التذكير · محوّل لقوى</span>':`<button class="btn gd sm" data-act="remind" data-v="${r.id}">أرسل تذكير للعامل</button>`}</div></div>`).join('')}
+   <p class="mut" style="margin:8px 0 0">التذكير يطلع في تطبيق My Maharah عند العامل مع زر يوديه لقوى يجدد. الربط مع قوى نفسه محاكاة في هذا النموذج.</p>
+  </div>`;
+}
+function mApi(){
+  return `<div class="chead"><h2>التكامل</h2><span class="live">API · متصل (محاكاة)</span></div>
+  <div class="panel"><div class="api">
+   <div class="node"><div class="lg" style="background:linear-gradient(160deg,#C4A06A,#8E6C38)">م</div><b>نظام مهارة الأساسي</b><div class="mut">العقود، العمال، العملاء</div></div>
+   <div class="wire"><span>API</span><i></i><span>تزامن لحظي</span></div>
+   <div class="node"><div class="lg" style="background:linear-gradient(160deg,#4C8DFF,#1633FF)">و</div><b>وصل</b><div class="mut">الحضور الذكي، الطلبات، الرواتب</div></div>
+  </div>
+  <h3 style="margin-top:6px">أمثلة على النقاط (توضيحية)</h3>
+  <div class="tw"><table><tbody>
+   <tr><td><code>GET /workers/{id}/contract</code></td><td>وصل يقرأ العقد والراتب من نظام مهارة</td></tr>
+   <tr><td><code>POST /attendance</code></td><td>كل بداية شفت محققة ترجع للنظام الأساسي</td></tr>
+   <tr><td><code>POST /payroll/run</code></td><td>مسير الرواتب يطلع من نفس سجل الحضور</td></tr>
+   <tr><td><code>POST /client-requests</code></td><td>طلبات العملاء تدخل كتذاكر بدل الإيميل</td></tr>
+  </tbody></table></div>
+  <p class="mut" style="margin:10px 0 0">وصل طبقة فوق أنظمة مهارة الحالية، ما يستبدلها. الربط مع قوى وأجير وزاتكا محاكاة في هذا النموذج.</p></div>`;
+}
+
+/* ---------- modal (client request) ---------- */
+function modalHtml(){
+  if(S.modal!=='newreq')return '';
+  const m=S.mreq;
+  return `<div class="modal" data-act="close-bg"><form class="mbox" id="reqf" role="dialog" aria-label="طلب جديد">
+   <h3>طلب جديد</h3>
+   <div class="seg">${['عامل إضافي','بديل','شكوى'].map(t=>`<button type="button" data-act="rtype" data-v="${t}" aria-pressed="${m.type===t}">${t}</button>`).join('')}</div>
+   <label class="f">الفرع<select id="rbranch">${S.branches.map(b=>`<option value="${b.id}" ${m.branch===b.id?'selected':''}>${b.n}</option>`).join('')}</select></label>
+   <label class="f">ملاحظة<input type="text" id="rnote" value="${esc(m.note)}" placeholder="${m.type==='شكوى'?'وش المشكلة؟':'مثلًا: الخميس 4 م إلى 12 ص · كاشير'}"></label>
+   <button class="btn pk" type="submit">إرسال الطلب لمهارة</button>
+   <button class="btn ol" type="button" data-act="close">إلغاء</button>
+  </form></div>`;
+}
+
+/* ---------- render ---------- */
+const HINTS={
+ worker:'<i>جرّب</i><span>اضغط <b>«ابدأ الشفت»</b> في تطبيق كريم، وبعدين افتح <b>لوحة دانكن</b> أو <b>لوحة مهارة</b> وشوف حضوره وصل لهم.</span>',
+ client:'<i>جرّب</i><span>ارفع <b>طلب جديد</b>، اسأل <b>مدير الحساب الذكي</b>، أو طابق <b>شيت الحضور</b>. كل شي يوصل للوحة مهارة. (دانكن هنا مثال توضيحي)</span>',
+ maharah:'<i>جرّب</i><span>أرسل <b>بديل</b> للغايب، اقبل <b>اعتراض كريم</b>، ولّد <b>الرواتب والفاتورة</b>، وأرسل <b>تذكير تجديد</b>. شوف كيف يتحدث تطبيق كريم ولوحة دانكن.</span>'
+};
+function render(){
+  document.querySelectorAll('.tab').forEach(t=>{const v=t.dataset.view;t.setAttribute('aria-selected',v===S.view);t.innerHTML=t.textContent.replace(/\s+$/,'')+(S.unseen[v]&&v!==S.view?'<span class="dot"></span>':'')});
+  document.getElementById('hint').innerHTML=HINTS[S.view];
+  app.innerHTML={worker,client,maharah}[S.view]();
+  document.getElementById('modal').innerHTML=modalHtml();
+  document.getElementById('logn').textContent=S.log.length;
+  document.getElementById('drawer').innerHTML=S.drawer?`<aside class="drawer" role="dialog" aria-label="السجل المشترك"><div class="row between"><h3>السجل المشترك</h3><button class="btn-ghost" data-act="log">إغلاق</button></div><p>كل حركة تنسجل مرة وحدة، والكل يشوفها: العامل والعميل ومهارة.</p><div style="overflow-y:auto">${S.log.length?S.log.map(e=>`<div class="ev">${e.text}<small>${e.views.map(v=>`<span class="who">${{worker:'كريم',client:'دانكن',maharah:'مهارة'}[v]}</span>`).join('')} ${e.t}</small></div>`).join(''):'<p>ما فيه حركات للحين. ابدأ الشفت من تطبيق كريم.</p>'}</div></aside>`:'';
+  const c=document.getElementById('chat');if(c)c.scrollTop=c.scrollHeight;
+  S.flash={};
+}
+function go(v){S.view=v;S.unseen[v]=0;try{history.replaceState(null,'','#'+v)}catch(e){location.hash=v}render();window.scrollTo({top:0})}
+
+/* ---------- actions ---------- */
+function startShift(){
+  S.shift='verifying';S.verifyStep=0;render();
+  const seq=[[1100,1],[1900,2],[3000,3],[4100,4]];
+  seq.forEach(([ms,st])=>setTimeout(()=>{
+    if(st<4){S.verifyStep=st;render();return}
+    S.shift='on';S.days=22;
+    const m=S.branches.find(b=>b.id==='malqa');m.here=Math.min(m.need,m.here+1);
+    S.flash={sal:1,b_malqa:1,w_كريم:1,dk:1};
+    render();
+    emit('كريم بدأ الشفت 8:02 في دانكن · فرع الملقا. الهوية ✓ والموقع داخل النطاق ✓. راتبه المتوقع صار '+fmt(expected())+' ريال.',['worker','client','maharah']);
+  },ms));
+}
+function ask(q){
+  if(!q.trim())return;
+  S.chat.push({me:true,t:q});
+  let a=answer(q);
+  if(!a){const id='q'+Date.now();S.tickets.unshift({id,kind:'سؤال',title:'دانكن · '+q,sub:'من مدير الحساب الذكي · يحتاج رد',done:false,src:'client'});S.flash['t_'+id]=1;
+    a='سؤالك يحتاج مدير حسابك، حوّلته له تذكرة في مهارة الحين. بتلقى الرد هنا.';S.chat.push({me:false,t:a});render();emit('دانكن سأل مدير الحساب الذكي، وتحوّل السؤال تذكرة لمهارة.',['client','maharah']);return}
+  S.chat.push({me:false,t:a});render();
+}
+document.addEventListener('click',e=>{
+  const tab=e.target.closest('.tab');if(tab){go(tab.dataset.view);return}
+  const el=e.target.closest('[data-act]');if(!el)return;
+  const a=el.dataset.act,v=el.dataset.v;
+  if(a==='close-bg'&&e.target!==el)return;
+  switch(a){
+   case 'reset':S=fresh();go('worker');toast('رجعنا كل شي لبداية اليوم.');break;
+   case 'log':S.drawer=!S.drawer;render();break;
+   case 'soon':toast('هذي الصفحة موجودة في تطبيق My Maharah الحالي، وما غيرنا فيها.');break;
+   case 'wtab':S.wtab=v;if(v==='reqs')S.wnotes.forEach(n=>n.read=true);render();break;
+   case 'start':startShift();break;
+   case 'dispute':S.modal='dispute';S.pick=null;render();break;
+   case 'reason':S.pick=v;render();break;
+   case 'close':case 'close-bg':S.modal=null;render();break;
+   case 'send-dispute':S.ded.status='disputed';S.ded.reason=S.pick;S.modal=null;S.flash.disp=1;render();emit('كريم اعترض على خصم التأخير #4613 (45 ريال) من التطبيق.',['worker','maharah']);break;
+   case 'disp-ok':S.ded.status='refunded';S.wnotes.unshift({kind:'ok',title:'انقبل اعتراضك ✓',body:'رجعنا خصم التأخير 45 ريال، وراتبك المتوقع صار '+fmt(expected())+' ريال.',read:false});S.flash.payk=1;render();emit('مهارة قبلت اعتراض كريم ورجع 45 ريال. راتبه المتوقع صار '+fmt(expected())+' ريال.',['maharah','worker']);break;
+   case 'disp-no':S.ded.status='rejected';S.wnotes.unshift({kind:'no',title:'تمت مراجعة اعتراضك',body:'الخصم باقي حسب سجل الحضور. تقدر تتواصل مع مدير حسابك.',read:false});render();emit('مهارة راجعت اعتراض كريم وأبقت الخصم.',['maharah','worker']);break;
+   case 'ctab':S.ctab=v;render();break;
+   case 'mtab':S.mtab=v;render();break;
+   case 'newreq':S.modal='newreq';S.mreq={type:'عامل إضافي',branch:'olaya',note:''};render();break;
+   case 'rtype':S.mreq.type=v;S.mreq.branch=document.getElementById('rbranch').value;S.mreq.note=document.getElementById('rnote').value;render();break;
+   case 'approve-req':{const r=S.reqs.find(x=>x.id===v);r.status='done';S.flash['r_'+r.id]=1;render();emit('مهارة اعتمدت طلب دانكن ('+r.type+' · '+r.branchName+') ونفّذته.',['maharah','client']);break}
+   case 'ticket-done':{const t=S.tickets.find(x=>x.id===v);t.done=true;t.sub='رد مدير الحساب ✓';S.chat.push({me:false,t:'مدير حسابك في مهارة رد على سؤالك: تم ✓ وتواصلنا معكم بالتفاصيل.'});render();emit('مدير الحساب في مهارة رد على سؤال دانكن.',['maharah','client']);break}
+   case 'send-repl':{S.absent.status='replacement';S.flash.b_nakheel=1;S.flash['w_سالم']=1;S.reqs.unshift({id:'rp'+Date.now(),type:'بديل',branch:'nakheel',branchName:'فرع النخيل',note:'بديل تلقائي لغياب سالم',status:'done',t:time()});render();emit('مهارة شافت غياب سالم وأرسلت بديل لدانكن · فرع النخيل.',['maharah','client']);break}
+   case 'loadsheet':S.sheet='loaded';render();emit('دانكن رفع شيت حضور نوفمبر، ووصل طابقه: فيه فرق يوم في فرع العليا.',['client','maharah']);break;
+   case 'approvesheet':S.sheet='approved';render();emit('دانكن اعتمد مطابقة الحضور. الفاتورة تطلع على نفس الأرقام.',['client','maharah']);break;
+   case 'gen':S.payroll='generated';render();emit('مهارة ولّدت مسير الرواتب وفاتورة دانكن من نفس سجل الحضور.',['maharah','client','worker']);break;
+   case 'remind':{const r=S.reminders.find(x=>x.id===v);r.sent=true;S.flash['rm_'+r.id]=1;
+     if(r.name==='كريم')S.wnotes.unshift({kind:'renew',title:'عقدك يخلص بعد 3 شهور',body:'عقد العمل ينتهي 29 يناير 2027. جدّده عن طريق قوى قبل لا يفوتك.',read:false});
+     render();emit('مهارة أرسلت تذكير تجديد ('+r.what+') لـ'+r.name+'، والتذكير يوديه لقوى.',r.name==='كريم'?['maharah','worker']:['maharah']);break}
+   case 'ask':ask(v);break;
+  }
+});
+document.addEventListener('submit',e=>{
+  e.preventDefault();
+  if(e.target.id==='askf'){const i=document.getElementById('askin');ask(i.value);return}
+  if(e.target.id==='reqf'){
+    const b=document.getElementById('rbranch').value,n=document.getElementById('rnote').value.trim();
+    const br=S.branches.find(x=>x.id===b);const id='r'+Date.now();
+    S.reqs.unshift({id,type:S.mreq.type,branch:b,branchName:br.n,note:n,status:'open',t:time()});
+    S.modal=null;S.flash['r_'+id]=1;S.ctab='reqs';render();
+    emit('دانكن رفع طلب '+S.mreq.type+' لـ'+br.n+' من البوابة.',['client','maharah']);
+  }
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.modal||S.drawer)){S.modal=null;S.drawer=false;render()}});
+function fromHash(){const h=(location.hash||'').slice(1);if(['worker','client','maharah'].includes(h)){S.view=h;S.unseen[h]=0}render()}
+window.addEventListener('hashchange',fromHash);
+fromHash();
+})();
+</script>
+
+<div class="modal" id="iosHint" hidden><div class="mbox"><h3>ثبّت وصل على جوالك</h3><p style="margin:0;line-height:1.9">في سفاري اضغط زر <b>المشاركة</b> تحت، بعدين <b>«إضافة إلى الشاشة الرئيسية»</b>.<br>في أندرويد من قائمة كروم اختر <b>«تثبيت التطبيق»</b>.</p><button class="btn gd" id="iosClose">تمام</button></div></div>
+<script>
+(function(){
+  if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+  const b=document.getElementById('installBtn'),h=document.getElementById('iosHint');let dp=null;
+  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(!standalone) b.hidden=false;
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;b.hidden=false});
+  addEventListener('appinstalled',()=>{b.hidden=true});
+  b.addEventListener('click',async e=>{e.stopPropagation();if(dp){dp.prompt();await dp.userChoice;dp=null}else{h.hidden=false}});
+  document.getElementById('iosClose').addEventListener('click',e=>{e.stopPropagation();h.hidden=true});
+})();
+</script>
+</body></html>
